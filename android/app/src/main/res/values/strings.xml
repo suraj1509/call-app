@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Match o Match</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">jrhoq4FYm913jW0ScQUuW0BzpP2XdcVMMRNUju</string>
+    <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
+    <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
+    <string name="facebook_app_id">554995197391739</string>
+    <string name="facebook_client_token">a72327dd8a4ed26a8df8707047c87af2</string>
+</resources>
