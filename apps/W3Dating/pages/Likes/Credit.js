@@ -5,15 +5,15 @@ import { COLORS, FONTS } from '../../../../app/constants/theme';
 import { useTheme } from '@react-navigation/native';
 import { GlobalStyleSheet } from '../../../../app/constants/StyleSheet';
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { IMAGES } from '../../../../app/constants/theme';
-import { useNavigation } from '@react-navigation/native'; 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Actions from '../../../../redux/Actions';
 import RazorpayCheckout from 'react-native-razorpay';
+import ButtonOutline from '../../../../app/components/Button/ButtonOutline';
+import ButtonLight from '../../../../app/components/Button/ButtonLight';
 
 
-const RechargeScreen = () => {
+const Credit = ({navigation}) => {
   const BASE_AMOUNT = 100; // You can easily change this later
   const optionsCount = 6;  // How many options you want to show
   const amount = useSelector((state) => state?.user?.currentUser?.wallet);
@@ -84,84 +84,39 @@ const handleAddRecharge = async() => {
                        <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
                     </TouchableOpacity>
           </View>
-    <View style={styles.container}>
-      <Text style={styles.title}>Recharge Your Account</Text>
+    <View style={[GlobalStyleSheet.container,{flex: 1, padding: 40,justifyContent: 'center', alignItems: 'center'}]}>
+      <View>
       <FlatList
         data={rechargeOptions}
         keyExtractor={(item) => item.toString()}
         numColumns={2}
-        contentContainerStyle={styles.optionsContainer}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.optionButton,
-              selectedAmount === item && styles.selectedButton,
-            ]}
-            onPress={() => handleRecharge(item)}
-          >
-            <Text style={styles.optionText}>₹{item}</Text>
-          </TouchableOpacity>
+       <View style={{width: '46%', marginHorizontal: 6, marginVertical: 10}}>
+        <View >
+            {selectedAmount !== item ? (<ButtonOutline onPress={() => handleRecharge(item)} title={item} btnRounded />)
+              : (<GradientBtn onPress={() => handleRecharge(item)} title={item} btnRounded paddingHorizontal={12} height={48}/>)}
+       </View>
+       </View>
         )}
-      />
-
-      {selectedAmount && (
-        <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>Selected Amount: ₹{selectedAmount}</Text>
-        </View>
-      )}
-      <View style={{paddingVertical: 100, paddingHorizontal:20}}>
-      <GradientBtn
-        onPress={handleAddRecharge}
-        title={"Proceed to Payment"}
-        style={{ width: "100%" }}
       />
       </View>
     </View>
+      <View style={{paddingVertical: 100, paddingHorizontal:20, gap: 40}}>
+      <ButtonLight
+        onPress={() => navigation.navigate("History")}
+        title={"Check History"}
+        btnRounded
+        color={COLORS.textLight}
+      />
+      <ButtonOutline
+        onPress={handleAddRecharge}
+        title={"Proceed to Payment"}
+        btnRounded
+      />
+      </View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f9f9f9',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  optionsContainer: {
-    alignItems: 'center',
-  },
-  optionButton: {
-    backgroundColor: '#e0e0e0',
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    margin: 10,
-    width: '40%',
-    alignItems: 'center',
-  },
-  selectedButton: {
-    backgroundColor: COLORS.primary4,
-  },
-  optionText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  summaryContainer: {
-    flex: 1,
-    marginTop: 30,
-    alignItems: 'center',
-  },
-  summaryText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: "black"
-  },
-});
 
-export default RechargeScreen;
+export default Credit;

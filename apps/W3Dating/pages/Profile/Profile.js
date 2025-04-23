@@ -215,10 +215,10 @@ const Profile = ({ navigation, route }) => {
                 marginBottom: 20,
               }}
             >
-              <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={styles.actionBtn}>
+              <TouchableOpacity  style={styles.actionBtn}>
                 <FontAwesome5 color={COLORS.primary} size={22} name={"cog"} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={async () => navigation.navigate("CurrentUserProfileDetails", { age })}>
+              <TouchableOpacity >
                 <View
                   style={{
                     alignItems: "center",
@@ -236,15 +236,24 @@ const Profile = ({ navigation, route }) => {
                       strokeCap={"round"}
                     />
                   </View>
-                  <Image
+                  {user.profilePhotos[0] ? (<Image
                     style={{
                       height: 120,
                       width: 120,
                       borderRadius: 100,
                       position: "absolute",
                     }}
-                    source={user?.profilePhoto ? { uri: user.profilePhoto } : IMAGES.userPic}
-                  />
+                    source={{ uri: user.profilePhotos[0] }}
+                  /> ): (
+                  <Image
+                    style={{
+                      height: 100,
+                      width: 100,
+                      borderRadius: 100,
+                      position: "absolute",
+                    }}
+                    source={IMAGES.avtar2}
+                  />)}
                   <View
                     style={[
                       styles.profileProgress,
@@ -273,10 +282,10 @@ const Profile = ({ navigation, route }) => {
               <Text style={{ ...FONTS.h4, color: colors.title, lineHeight: 22 }}>
                 {user?.name} , {age}
               </Text>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <FeatherIcon color={colors.text} size={13} style={{ marginRight: 5, top: 1 }} name="map-pin" />
                 <Text style={{ ...FONTS.font, color: colors.text }}>{user?.currentAddress}</Text>
-              </View>
+              </View> */}
             </View>
           </View>
           <View style={{ backgroundColor: colors.background }}>

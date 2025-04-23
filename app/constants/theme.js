@@ -283,6 +283,9 @@ export const IMAGES = {
   unsave: require("../assets/images/unsave.png"),
   verified: require("../assets/images/approved.png"),
   unstar: require("../assets/images/icons/unstar.png"),
+  wallet: require("../assets/images/icons/wallet.png"),
+  history: require("../assets/images/icons/exchange.png"),
+  avtar2: require("../assets/images/icons/theme-avtar.png"),
   videoCall: require("../assets/images/video.png"),
 };
 

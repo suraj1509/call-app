@@ -13,29 +13,32 @@ import * as Actions from "../../../../redux/Actions";
 import { useDispatch, useSelector } from "react-redux";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-const btnData = [
-  {
-    name: "Men",
-  },
-  {
-    name: "Women",
-  },
-  {
-    name: "Everyone",
-  },
-];
-
-const Likes = ({ navigation }) => {
+const Home = ({ navigation }) => {
   const theme = useTheme();
   const { colors } = theme;
   const dispatch = useDispatch();
   const feedUsers = useSelector((state) => state?.user?.feedUsers);
+  const role = useSelector((state) => state.user.currentUser?.role)
+  const [feed, setFeed] = React.useState([])
   const amount = useSelector((state) => state?.user?.currentUser?.wallet);
 
   React.useEffect(() => {
     dispatch(Actions?.fetchCurrentUser());
-    dispatch(Actions?.fetchFeedUsers("employer"));
   }, []);
+  
+  React.useEffect(() => {
+    if(role){
+      dispatch(Actions?.fetchFeedUsers(role));
+    }
+  }, [role]);
+
+  React.useEffect(()=>{
+    if(feedUsers){
+      setFeed(feedUsers)
+    }else{
+      return;
+    }
+  },[feedUsers])
 
   return (
     <>
@@ -75,7 +78,8 @@ const Likes = ({ navigation }) => {
         <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
           <View style={GlobalStyleSheet.container}>
             <View style={GlobalStyleSheet.row}>
-              {feedUsers.map((data, index) => {
+              {feed?.map((data, index) => {
+                if (!data?.profilePhoto) return null;
                 return (
                   <View style={[GlobalStyleSheet.col50,{ borderRadius: 10}]} key={index}>
                     <TouchableOpacity
@@ -127,16 +131,4 @@ const Likes = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  headerArea: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-  },
-});
-
-export default Likes;
+export default Home;

@@ -13,11 +13,14 @@ import auth from "@react-native-firebase/auth";
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
 import useNotificationHandler from "../../apps/W3Dating/Utilities/NotificationsHandler";
+import { useDispatch } from "react-redux";
+import * as Actions from "../../redux/Actions";
 
 const Routes = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
 
   const authContext = React.useMemo(
     () => ({
@@ -67,6 +70,7 @@ const Routes = () => {
         if (idTokenResult) {
           setIsLoggedIn(true);
           setUser({ ...user, ...(idTokenResult?.claims || {}) });
+          dispatch(Actions.fetchCurrentUser())
         }
       } else {
         setIsLoggedIn(false);

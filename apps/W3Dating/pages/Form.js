@@ -25,7 +25,6 @@ import GradientBtn from "./components/GradientBtn";
 import userServices from "../../../services/user";
 import CheckList from "./components/CheckList";
 import { languagesData } from "../Utilities/Languages";
-import { menProfilePhotos, womenProfilePhotos } from "../Utilities/profilePhotos";
 
 const Form = ({ navigation, route }) => {
   const [name, setName] = useState("");
@@ -41,7 +40,7 @@ const [modal, setModal] = useState(false);
 const [modalMode, setModalMode] = useState("gender");
 const [language, setLanguage] = useState("");
 const [role, setRole] = useState("");
-const [referalCode, setReferalCode] = useState("");
+const [referralCode, setReferralCode] = useState(null);
 const { height } = Dimensions.get("window");
 const theme = useTheme();
 
@@ -50,18 +49,6 @@ const theme = useTheme();
     setDatePicker(false);
     setBirthDate(true);
   }
-
-  const setProfilePhoto = () => {
-    const getRandomPhoto = (photos) => photos[Math.floor(Math.random() * photos.length)];
-  
-    if (genderData[activeGender] === "male") {
-      return getRandomPhoto(menProfilePhotos);
-    } else if (genderData[activeGender] === "female") {
-      return getRandomPhoto(womenProfilePhotos);
-    } else {
-      return getRandomPhoto(menProfilePhotos);
-    }
-  };
   
 
   const handleNext = async () => {
@@ -100,17 +87,15 @@ const theme = useTheme();
         ToastAndroid.show("Please select a gender to proceed", ToastAndroid.SHORT);
         return;
       }
-
-      const profilePhoto = await setProfilePhoto();        
+       
       // setIsLoading(true);
       userServices.updateUser({
         name: trimmedName,
         language: language,
         dob: date,
-        referalCode,
+        referralCode,
         gender: genderData[activeGender],
         role,
-        profilePhoto,
         onboardingStage: 2,
       });
      
@@ -397,9 +382,9 @@ const theme = useTheme();
               </View>
                <View style={GlobalStyleSheet.col50}>
             <CheckList
-                    onPress={() => setRole("Employer")}
+                    onPress={() => setRole("Employee")}
                     item={["Employee"]}
-                    checked={role == "Employer" ? true : false}
+                    checked={role == "Employee" ? true : false}
                 key={0}
                   />
          
@@ -425,8 +410,8 @@ const theme = useTheme();
                   }}
                   placeholder="Referal Code"
                   placeholderTextColor={colors.textLight}
-                  value={referalCode}
-                  onChangeText={(text)=>setReferalCode(text)}
+                  value={referralCode}
+                  onChangeText={(text)=>setReferralCode(text)}
                 />
               </View>
             </View>

@@ -37,53 +37,12 @@ import Form from "./Form";
 const StackComponent = createNativeStackNavigator();
 
 export const getOnboardingScreen = async (stage = 1) => {
-  let screen;
-  if (stage === 8) {
-    const fineLocationStatus = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-    const coarseLocationStatus = await check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
-
-    if (fineLocationStatus === RESULTS.GRANTED && coarseLocationStatus === RESULTS.GRANTED) {
-      screen = await new Promise((resolve) => {
-        Geolocation.getCurrentPosition(
-          async (position) => {
-            try {
-              await services?.updateUser({
-                onboardingStage: 9,
-                location: {
-                  type: "Point",
-                  coordinates: [position.coords.longitude, position.coords.latitude],
-                },
-                profileStatusToAdd: ["location"],
-              });
-              resolve("DrawerNavigation");
-            } catch (error) {
-              console.error("Error updating user location:", error);
-              resolve("Location"); // Fallback to stage 8 on failure
-            }
-          },
-          (error) => {
-            console.error("Error getting location:", error);
-            resolve("Location"); // Fallback to stage 8 on failure
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 10000,
-          },
-        );
-        return screen;
-      });
-    } else {
-      return "Location";
-    }
-  } else {
     switch (stage) {
       case 1:
         return "Form";
       default:
         return "DrawerNavigation";
     }
-  }
 };
 
 const W3DatingPage = ({ initialLoading = false, skipInitialLaunch = false, isLoggedIn = false, user = null }) => {

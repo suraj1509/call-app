@@ -1,11 +1,11 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "../pages/Home/Home";
-import UserListing from "../pages/Likes/Likes";
-import Chat from "../pages/Chats/Chat";
+// import Home from "../pages/Home/Home";
+import Home from "../pages/Likes/Home";
+import History from "../pages/Chats/History";
 import Profile from "../pages/Profile/Profile";
 import CustomNavigation from "./CustomNavigation";
-import UsersMenu from "../pages/Likes/UsersMenu";
+import Credit from "../pages/Likes/Credit";
 import { TouchableWithoutFeedback } from "react-native";
 
 const Tab = createBottomTabNavigator();
@@ -17,7 +17,7 @@ const BottomNavigation = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="UserListing"
+      initialRouteName="Home"
     >
       {/* <Tab.Screen
         name="Home"
@@ -27,22 +27,22 @@ const BottomNavigation = () => {
         }}
       /> */}
       <Tab.Screen
-        name="Cards"
-        component={UserListing}
+        name="Home"
+        component={Home}
         options={{
           tabBarButton: (props) => <TouchableWithoutFeedback {...props} />,
         }}
       />
       <Tab.Screen
-        name="Likes"
-        component={UsersMenu}
+        name="Credit"
+        component={Credit}
         options={{
           tabBarButton: (props) => <TouchableWithoutFeedback {...props} />,
         }}
       />
       <Tab.Screen
-        name="Chat"
-        component={Chat}
+        name="History"
+        component={History}
         options={{
           tabBarButton: (props) => <TouchableWithoutFeedback {...props} />,
         }}

@@ -10,7 +10,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import database from '@react-native-firebase/database';
 import { useSelector } from 'react-redux';
 
-const CallHistoryScreen = () => {
+const History = () => {
   const currentUser = useSelector((state) => state?.user?.currentUser);
   const [history, setHistory] = React.useState([]);
 
@@ -131,16 +131,16 @@ const theme = useTheme();
                   History
                 </Text>
                 <TouchableOpacity
-                                      onPress={() => navigation.navigate("Filter")}
-                                      style={[GlobalStyleSheet.headerBtn, { borderColor: colors.text, justifyContent:"center", alignItems:"center", flexDirection:"row", width:80 }]}
-                                    >
-                                      <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.success }}>
-                                                      {currentUser.wallet}
-                                                    </Text>
-                                       <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
-                                    </TouchableOpacity>
+                  onPress={() => navigation.navigate("Filter")}
+                  style={[GlobalStyleSheet.headerBtn, { borderColor: colors.text, justifyContent:"center", alignItems:"center", flexDirection:"row", width:80 }]}
+                >
+                  <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.success }}>
+                                  {currentUser.wallet}
+                                </Text>
+                    <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
+                </TouchableOpacity>
               </View>
-    <View style={styles.container}>
+    <View style={[GlobalStyleSheet.container,{flex: 1, padding: 40,justifyContent: 'center', alignItems: 'center'}]}>
       <FlatList
         data={history}
         keyExtractor={(item, index) => index.toString()}
@@ -196,4 +196,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CallHistoryScreen;
+export default History;

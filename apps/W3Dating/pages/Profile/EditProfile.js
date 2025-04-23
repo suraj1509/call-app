@@ -32,6 +32,7 @@ import LanguageSheet from "../components/LanguageSheet";
 import AboutSheet from "../components/AboutSheet";
 import ImageResizer from "react-native-image-resizer";
 import * as services from "../../../../services/user";
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 const EditProfile = ({ navigation }) => {
   const user = useSelector((state) => state?.user?.currentUser);
@@ -44,9 +45,9 @@ const EditProfile = ({ navigation }) => {
     "New friends",
     "Stil figuring it out",
   ];
-  const profileSheet = useRef();
-  const sheetRef = useRef();
-  const languageSheet = useRef();
+  // const profileSheet = useRef();
+  // const sheetRef = useRef();
+  // const languageSheet = useRef();
   const aboutSheet = useRef();
   const dispatch = useDispatch();
 
@@ -66,16 +67,17 @@ const EditProfile = ({ navigation }) => {
   const [image4, setImage4] = React.useState("");
   const [image5, setImage5] = React.useState("");
   const [upload, setUpload] = React.useState(false);
+  const [rate, setRate] = useState([user?.rate] || [5]);
   const [lookingFor, setLookingFor] = useState(user?.preferences?.lookingFor);
 
   React.useEffect(() => {
     if (user?.profilePhotos) {
-      setImage0(user?.profilePhotos[0]?.url);
-      setImage1(user?.profilePhotos[1]?.url);
-      setImage2(user?.profilePhotos[2]?.url);
-      setImage3(user?.profilePhotos[3]?.url);
-      setImage4(user?.profilePhotos[4]?.url);
-      setImage5(user?.profilePhotos[5]?.url);
+      setImage0(user?.profilePhotos[0]);
+      setImage1(user?.profilePhotos[1]);
+      setImage2(user?.profilePhotos[2]);
+      setImage3(user?.profilePhotos[3]);
+      setImage4(user?.profilePhotos[4]);
+      setImage5(user?.profilePhotos[5]);
     }
   }, [user]);
 
@@ -95,26 +97,26 @@ const EditProfile = ({ navigation }) => {
     if (upload === true) {
       let profilePhotos = [];
       if (image0) {
-        profilePhotos.push({ url: image0 });
+        profilePhotos.push(image0);
       }
       if (image1) {
-        profilePhotos.push({ url: image1 });
+        profilePhotos.push(image1);
       }
       if (image2) {
-        profilePhotos.push({ url: image2 });
+        profilePhotos.push(image2);
       }
       if (image3) {
-        profilePhotos.push({ url: image3 });
+        profilePhotos.push( image3 );
       }
       if (image4) {
-        profilePhotos.push({ url: image4 });
+        profilePhotos.push( image4 );
       }
       if (image5) {
-        profilePhotos.push({ url: image5 });
+        profilePhotos.push(image5);
       }
-      if (profilePhotos.length > 0) {
-        profilePhotos[0].isProfilePhoto = true;
-      }
+      // if (profilePhotos.length > 0) {
+      //   profilePhotos[0].isProfilePhoto = true;
+      // }
       services.updateUser({ profilePhotos });
       ToastAndroid.show("Photos Adjusted Successfully", ToastAndroid.SHORT);
       setUpload(false);
@@ -265,17 +267,17 @@ const EditProfile = ({ navigation }) => {
     }
   };
 
-  const SaveRelationShipGoals = async () => {
-    dispatch(Actions?.updateCurrentUser({ preferences: { lookingFor } }));
-  };
+  // const SaveRelationShipGoals = async () => {
+  //   dispatch(Actions?.updateCurrentUser({ preferences: { lookingFor } }));
+  // };
 
   return (
     <>
-      <InterestsSheet sheetRef={profileSheet} />
-      <LanguageSheet sheetRef={languageSheet} />
+      {/* <InterestsSheet sheetRef={profileSheet} />
+      <LanguageSheet sheetRef={languageSheet} /> */}
       <AboutSheet sheetRef={aboutSheet} />
 
-      <RBSheet
+      {/* <RBSheet
         ref={sheetRef}
         height={480}
         openDuration={100}
@@ -304,7 +306,7 @@ const EditProfile = ({ navigation }) => {
         ) : (
           <></>
         )}
-      </RBSheet>
+      </RBSheet> */}
 
       <SafeAreaView
         style={{
@@ -658,7 +660,7 @@ const EditProfile = ({ navigation }) => {
               </View>
             </View>
 
-            <View
+            {/* <View
               style={[
                 GlobalStyleSheet.card,
                 {
@@ -728,7 +730,7 @@ const EditProfile = ({ navigation }) => {
                 titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
                 title={genderData[lookingFor] || "Long-term partner"}
               />
-            </View>
+            </View> */}
             <View
               style={[
                 GlobalStyleSheet.card,
@@ -739,6 +741,7 @@ const EditProfile = ({ navigation }) => {
                 },
               ]}
             >
+              <View style={{flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
               <Text
                 style={{
                   ...FONTS.font,
@@ -746,22 +749,51 @@ const EditProfile = ({ navigation }) => {
                   color: colors.title,
                   paddingBottom: 8,
                   marginBottom: 5,
-                  borderBottomWidth: 1,
-                  borderBottomColor: colors.borderColor,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: colors.borderColor,
                 }}
               >
-                Language I Know
+                Set Rate
               </Text>
-              <List.Item
-                onPress={() => {
-                  languageSheet.current.open();
-                }}
+              <Text
                 style={{
-                  marginHorizontal: -15,
+                  ...FONTS.font,
+                  ...FONTS.fontBold,
+                  color: colors.title,
+                  paddingBottom: 8,
+                  marginBottom: 5,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: colors.borderColor,
                 }}
-                titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
-                title={user?.languagesSpoken?.map((language) => language).join(", ") || "Add Languages"}
-              />
+              >
+                {rate}
+              </Text>
+              </View>
+              <View style={{alignItems:"center"}}>
+
+               <MultiSlider
+                                      trackStyle={{height:4,borderRadius:2,backgroundColor:'rgba(142,165,200,.3)'}}
+                                      selectedStyle={{
+                                          backgroundColor:COLORS.primary3,
+                                      }}
+                                      values={rate}
+                                      markerStyle={{
+                                          backgroundColor:COLORS.white,
+                                          top:1,
+                                          height:16,
+                                          width:16,
+                                          borderWidth:3,
+                                          borderColor:COLORS.primary3,
+                                      }}
+                                      onValuesChange={(val) => setRate(val)}
+                                      onValuesChangeFinish={(val) => {
+                                        dispatch(Actions?.updateCurrentUser({ rate: val[0] }));
+                                      }}
+                                      min={5}
+                                      sliderLength={SIZES.width - 100}
+                                      max={20}
+                                  />
+              </View>
             </View>
             <View
               style={[

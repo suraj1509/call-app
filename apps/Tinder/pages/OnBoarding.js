@@ -46,7 +46,6 @@ const OnBoarding = ({ navigation }) => {
       });
       const { user, onBoardingStage } = response;
       if (user && onBoardingStage) {
-        await AsyncStorage.multiRemove(["firstName", "dob", "gender", "interested", "lookingFor", "address"]);
         const stage = await getOnboardingScreen(onBoardingStage);
         setGoogleSigningProgress(false);
         navigation.navigate(stage);

@@ -123,15 +123,16 @@ const CustomNavigation = ({ state, navigation, descriptors }) => {
 
             if (route.name == "Home") {
               var a = 0;
-            } else if (route.name == "Cards") {
+            } else if (route.name == "Credit") {
               var a = SIZES.width / 4;
-            } else if (route.name == "Likes") {
+            } else if (route.name == "History") {
               var a = SIZES.width / 4 + SIZES.width / 4;
-            } else if (route.name == "Chat") {
-              var a = SIZES.width / 4 + SIZES.width / 4 + SIZES.width / 4;
             } else if (route.name == "Profile") {
-              var a = SIZES.width - SIZES.width / 4;
-            }
+              var a = SIZES.width / 4 + SIZES.width / 4 + SIZES.width / 4;
+            } 
+            // else if (route.name == "Profile") {
+            //   var a = SIZES.width - SIZES.width / 4;
+            // }
 
             var b = withTiming(a);
             offset.value = b;
@@ -147,16 +148,15 @@ const CustomNavigation = ({ state, navigation, descriptors }) => {
                     resizeMode: "contain",
                     opacity: isFocused ? 1 : 0.6,
                     tintColor: isFocused ? COLORS.white : colors.text,
+                    font: 'bold'
                   }}
                   source={
                     label === "Home"
                       ? IMAGES.home
-                      : label === "Cards"
-                      ? IMAGES.home
-                      : label === "Likes"
-                      ? IMAGES.shield
-                      : label === "Chat"
-                      ? IMAGES.notification
+                      : label === "Credit"
+                      ? IMAGES.wallet
+                      : label === "History"
+                      ? IMAGES.history
                       : label === "Profile" && IMAGES.user
                   }
                 />

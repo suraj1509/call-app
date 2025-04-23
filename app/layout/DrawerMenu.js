@@ -29,7 +29,7 @@ const DrawerMenu = () => {
             backgroundColor: COLORS.primary,
           }}
         >
-          <View
+          {user.profilePhotos[0] ? (<View
             style={{
               borderRadius: 50,
               borderWidth: 2,
@@ -43,9 +43,30 @@ const DrawerMenu = () => {
                 width: 48,
                 borderRadius: 50,
               }}
-              source={user?.profilePhotos?.[0]?.url ? { uri: user.profilePhotos[0].url } : IMAGES.userPic}
+              source={{ uri: user.profilePhotos[0] }}
             />
-          </View>
+          </View>):(
+          <View
+            style={{
+              borderRadius: 50,
+              borderWidth: 2,
+              borderColor: COLORS.white,
+              marginRight: 12,
+              height: 52,
+              width: 52,
+              justifyContent:"center",
+              alignItems:"center",
+            }}
+          >
+            <Image
+              style={{
+                height: 38,
+                width: 38,
+                borderRadius: 50,
+              }}
+              source={IMAGES.avtar2}
+            />
+          </View>)}
           <View>
             <Text style={{ ...FONTS.h6, color: COLORS.white, lineHeight: 20 }}>{user?.name}</Text>
             {user?.email ? (
@@ -54,7 +75,7 @@ const DrawerMenu = () => {
               <TouchableOpacity
                 onPress={() => {
                   navigation.dispatch(DrawerActions.closeDrawer());
-                  navigation.navigate("Settings", { drawer: true });
+                  navigation.navigate("EditProfile");
                 }}
               >
                 <Text style={{ ...FONTS.fontBold, color: COLORS.white }}>Add Email</Text>
@@ -80,7 +101,7 @@ const DrawerMenu = () => {
             <Text style={[styles.navText, { color: colors.text }]}>Components</Text>
             <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
           </TouchableOpacity> */}
-          <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={[styles.navLink]}>
+          <TouchableOpacity onPress={() => navigation.navigate("EditProfile")} style={[styles.navLink]}>
             <SvgXml style={{ marginRight: 12 }} height={22} width={22} stroke={"#bfc9da"} xml={ICONS.setting} />
             <Text style={[styles.navText, { color: colors.text }]}>Settings</Text>
             <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
