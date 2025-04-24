@@ -25,9 +25,14 @@ import GradientBtn from "./components/GradientBtn";
 import userServices from "../../../services/user";
 import CheckList from "./components/CheckList";
 import { languagesData } from "../Utilities/Languages";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { set } from "@react-native-firebase/database";
+import { useDispatch } from "react-redux";
+import * as Actions from '../../../redux/Actions'
 
 const Form = ({ navigation, route }) => {
   const [name, setName] = useState("");
+  const dispatch = useDispatch()
 const [isLoading, setIsLoading] = useState(false);
 const eighteenYearsBack = new Date();
 eighteenYearsBack.setFullYear(eighteenYearsBack.getFullYear() - 18);
@@ -41,6 +46,8 @@ const [modalMode, setModalMode] = useState("gender");
 const [language, setLanguage] = useState("");
 const [role, setRole] = useState("");
 const [referralCode, setReferralCode] = useState(null);
+const [consent, setConsent] = useState(false);
+const [isVisible, setIsVisible] = useState(false);
 const { height } = Dimensions.get("window");
 const theme = useTheme();
 
@@ -74,17 +81,21 @@ const theme = useTheme();
               return;
             }
       
-      if(!language || language?.length == 0 ){
+      if(!language || language?.length === 0 ){
         ToastAndroid.show("Please select a language to proceed", ToastAndroid.SHORT);
         return;
       }
-      if(!role || role?.length == 0 ){
+      if(!role || role?.length === 0 ){
         ToastAndroid.show("Please select a role to proceed", ToastAndroid.SHORT);
         return;
       }
       
-      if(!activeGender || genderData[activeGender].length == 0 ){
+      if(genderData[activeGender]?.length === 0 ){
         ToastAndroid.show("Please select a gender to proceed", ToastAndroid.SHORT);
+        return;
+      }
+       if(!consent){
+        ToastAndroid.show("Please agree to terms and conditions", ToastAndroid.SHORT);
         return;
       }
        
@@ -100,6 +111,7 @@ const theme = useTheme();
       });
      
       // setIsLoading(false);
+      await dispatch(Actions.fetchCurrentUser())
       navigation.navigate("DrawerNavigation");
     } catch (error) {
       // setIsLoading(false);
@@ -413,6 +425,177 @@ const theme = useTheme();
                   value={referralCode}
                   onChangeText={(text)=>setReferralCode(text)}
                 />
+              </View>
+            </View>
+        </View><View style={{ flex: 1 }}>
+        <Modal visible={isVisible} transparent onRequestClose={() => setIsVisible(false)}>
+                  <TouchableWithoutFeedback onPress={() => setIsVisible(false)}>
+                    <View
+                      style={{
+                        flex: 1,
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        justifyContent: "center",
+                        alignContent: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: colors.cardBg,
+                          margin: 20,
+                          borderRadius: 10,
+                          borderColor: colors.border,
+                          borderWidth: 1,
+                          // padding: 6,
+                          height: height * 0.8,
+                        }}
+                      >
+                        <TouchableWithoutFeedback onPress={() => {}}>
+                          <View
+                            style={{
+                              padding: 16,
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                ...FONTS.h5,
+                                // flex: 1,
+                                textAlign: "center",
+                                color: colors.title,
+                              }}
+                            >
+                              Terms & Conditions
+                            </Text>
+                            <TouchableOpacity style={{ padding: 10 }} onPress={() => setIsVisible(false)}>
+                              <FeatherIcon name={"x"} size={14} color={colors.title} />
+                            </TouchableOpacity>
+                          </View>
+                        </TouchableWithoutFeedback>
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+                          <TouchableWithoutFeedback onPress={() => {}}>
+                            <View style={{ paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
+                              <Text style={{ color: colors.text }}>
+                                Welcome to W3 Dating! These Terms of Service ("Terms") govern your use of our mobile
+                                application and related services. By accessing or using the service, you agree to be
+                                bound by these Terms. If you do not agree, please do not use the service.
+                              </Text>
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>1. Eligibility</Text>
+                              <Text style={{ color: colors.text }}>
+                                You must be at least 18 years old to use W3 Dating.
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                By using the service, you represent that you have the right, authority, and capacity to
+                                enter into this agreement and abide by all terms.
+                              </Text>
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>2. Account Registration</Text>
+                              <Text style={{ color: colors.text }}>
+                                You must create an account using accurate information.
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                You are responsible for maintaining the confidentiality of your account credentials.
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                You may not create more than one account or impersonate others.
+                              </Text>
+
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>3. User Conduct</Text>
+                              <Text style={{ color: colors.text }}>
+                                Use the service in a manner that is lawful and respectful to other users.
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                Not post content that is offensive, discriminatory, defamatory, or otherwise
+                                inappropriate.
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                Not use the service for spam, harassment, or fraudulent activity.
+                              </Text>
+
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>4. Privacy</Text>
+                              <Text style={{ color: colors.text }}>
+                                Your privacy is important to us. Please refer to our Privacy Policy to understand how we
+                                collect, use, and share your information.
+                              </Text>
+
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>
+                                5. Payments and Subscriptions
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                Some features may require a paid subscription or purchase.
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                All payments are non-refundable unless otherwise specified by applicable law.
+                              </Text>
+
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>6. Third-Party Services</Text>
+                              <Text style={{ color: colors.text }}>
+                                The app may contain links to third-party services. We are not responsible for their
+                                content or practices.
+                              </Text>
+
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>
+                                7. Limitation of Liability
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                W3DATING APP is provided "as is" without warranties of any kind.
+                              </Text>
+                              <Text style={{ color: colors.text }}>
+                                We are not responsible for any interactions or outcomes resulting from the use of our
+                                service.
+                              </Text>
+
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>8. Termination</Text>
+                              <Text style={{ color: colors.text }}>
+                                We may suspend or terminate your account if you violate these Terms or engage in
+                                behavior that we consider harmful to the community.
+                              </Text>
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>9. Changes to Terms</Text>
+                              <Text style={{ color: colors.text }}>
+                                We may modify these Terms at any time. Your continued use of the service after changes
+                                constitutes your acceptance of the updated Terms.
+                              </Text>
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>10. Governing Law</Text>
+                              <Text style={{ color: colors.text }}>
+                                These Terms are governed by the laws of INDIA/DELHI, without regard to its conflict of
+                                laws principles
+                              </Text>
+
+                              <Text style={{ ...FONTS.fontPoppins, color: colors.text }}>11. Contact Us</Text>
+                              <Text style={{ color: colors.text }}>
+                                If you have questions about these Terms, please contact us at support@w3dating.com
+                                email.
+                              </Text>
+                              <View
+                                style={{
+                                  marginBottom: 16,
+                                }}
+                              >
+                                <GradientBtn title={"Agree"} onPress={() => {
+                                  setConsent(true)
+                                  setIsVisible(false)
+                                  }} />
+                              </View>
+                            </View>
+                          </TouchableWithoutFeedback>
+                        </ScrollView>
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </Modal>
+            <View style={[GlobalStyleSheet.container, {justifyContent:"center", alignItems:"center"}]}>
+            {/* <Text style={{color: COLORS.dark, paddingVertical: 10 }}>Referral Code</Text> */}
+
+              <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                <TouchableOpacity onPress={() => setConsent(!consent)} style={{padding: 10}}>
+                <View style={{height: 18, width: 18, borderWidth: 1, borderColor: COLORS.borderColor}}>
+                {consent && (<FontAwesome5  name={"check"} size={16} color={COLORS.success} />)}
+               </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={{flexDirection: "row", justifyContent: "space-around", alignItems: "center"}} onPress={()=>setIsVisible(true)}>
+                  <Text style={{color:COLORS.textLight}}>I agree to {" "}</Text>
+                  <Text style={{color:COLORS.info}}>terms and conditions</Text>
+                </TouchableOpacity>
               </View>
             </View>
         </View>   

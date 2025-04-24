@@ -19,10 +19,10 @@ const ButtonLight = (props) => {
                 onPress={()=> props.onPress && props.onPress()}
                 style={[{
                     ...props.style,
-                    paddingHorizontal:12,
-                    paddingVertical:12,
+                    paddingHorizontal: props.paddingHorizontal ? props.paddingHorizontal : 12,
+                    paddingVertical: props.paddingVertical ? props.paddingVertical : 12,
                     alignItems:'center',
-                    height:48,
+                    height: props.height ? props.height: 48,
                     justifyContent:'center',
                     flexDirection:'row',
                 }]}

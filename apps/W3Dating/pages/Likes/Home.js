@@ -12,6 +12,8 @@ import Story from "../Home/Story";
 import * as Actions from "../../../../redux/Actions";
 import { useDispatch, useSelector } from "react-redux";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
+import ButtonLight from "../../../../app/components/Button/ButtonLight";
 
 const Home = ({ navigation }) => {
   const theme = useTheme();
@@ -77,25 +79,46 @@ const Home = ({ navigation }) => {
       </View>    
         <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
           <View style={GlobalStyleSheet.container}>
-            <View style={GlobalStyleSheet.row}>
+            <View style={[GlobalStyleSheet.row]}>
               {feed?.map((data, index) => {
-                if (!data?.profilePhoto) return null;
+                if (!data?.profilePhotos?.length === 0 ) return null;
                 return (
-                  <View style={[GlobalStyleSheet.col50,{ borderRadius: 10}]} key={index}>
+                  <View style={[GlobalStyleSheet.col50,{ borderRadius: 10, marginVertical: 8, gap: 4}]} key={index}>
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() => navigation.navigate("ProfileDetails", { item: data })}
+                     
                     >
-                      
                       <Image
                         style={{
                           width: "100%",
-                          height: 260,
+                          height: 200,
                           borderRadius: 10,
                           resizeMode:'cover',
                         }}
-                        source={{uri: data?.profilePhoto}}
+                        source={{uri: data?.profilePhotos[0]}}
                       />
+                      <View style={{ position: 'absolute', left: 2, top: 2, flexDirection: 'row', justifyContent: 'space-between', width: '96%'}}>
+                        <View style={{backgroundColor: `${COLORS.dark}80`, width: 60, flexDirection:'row', justifyContent:'space-around', alignItems:'center',borderRadius: 10, padding: 2}}>
+                          <View>
+                          <View style={{height: 8, width: 8, borderRadius: 8, backgroundColor: COLORS.success}}/>
+                          </View>
+                          <Text style={{color: COLORS.light, fontSize: 12}}>Online</Text>
+                        </View>
+                        <View>
+                        <TouchableOpacity>
+                         <Image
+                          source={IMAGES.unstar}
+                          style={{
+                              height:22,
+                              width:22,
+                              resizeMode:'contain',
+                          }}
+                          tintColor={COLORS.primary}
+                      />
+                      </TouchableOpacity> 
+                        </View>
+                      </View>
                       <LinearGradient
                         colors={["rgba(0,0,0,.0)", "rgba(0,0,0,.7)"]}
                         style={{
@@ -114,12 +137,17 @@ const Home = ({ navigation }) => {
                         <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.white }}>
                           {data.name}
                         </Text>
+                        <View style={{backgroundColor: COLORS.primary, paddingHorizontal: 8, borderRadius: 10}}>
                         <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.white }}>
-                        {data?.rate} $
+                        ₹ {data?.rate} 
                         </Text>
+                        </View>
                         </View>
                       </LinearGradient>
                     </TouchableOpacity>
+         
+                      
+                    <ButtonLight title="Call" paddingHorizontal={4} paddingVertical={4}  height={36}/>
                   </View>
                 );
               })}

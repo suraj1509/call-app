@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Image, SafeAreaView, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import LinearGradient from "react-native-linear-gradient";
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Actions from "../../../../redux/Actions";
 import * as services from "../../../../services/socialConnect";
 import database from '@react-native-firebase/database';
+import GradientBtn from "../components/GradientBtn";
 // import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const ProfileDetails = ({ route }) => {
@@ -104,13 +105,13 @@ const ProfileDetails = ({ route }) => {
   async function getOrCreateChannel(userId1, userId2) {
     try {
       const channelRef = database().ref('groups');
-     
-  
+
+
       const snapshot = await channelRef.once('value');
       const channels = snapshot.val() || {};
-  
+
       let existingChannel = null;
-  
+
       Object.entries(channels).forEach(([channelId, channelData]) => {
         if (channelData?.participants) {
           const participantIds = Object.keys(channelData.participants);
@@ -123,17 +124,17 @@ const ProfileDetails = ({ route }) => {
           }
         }
       });
-  
+
       if (existingChannel) {
         console.log('Channel already exists:', existingChannel.channelId);
         return `channel${existingChannel.channelId}`;
       }
-  
+
       const newChannelRef = channelRef.push();
       const newChannelId = newChannelRef.key;
       database().ref(`records/${activeProfileDetails?.id}`).push(`channel${newChannelId}`);
       database().ref(`records/${currentUser?.id}`).push(`channel${newChannelId}`);;
-  
+
       const initialCallDetails = {
         createdAt: Date.now(),
         participants: {
@@ -142,23 +143,23 @@ const ProfileDetails = ({ route }) => {
         },
         calls: {},
       };
-  
+
       await newChannelRef.set(initialCallDetails);
       return `channel${newChannelId}`;
-  
+
     } catch (error) {
       console.error('Error in getOrCreateChannel:', error);
       throw error;
     }
   }
-  
+
   function getValidSeconds(walletAmount, amountPerMinute) {
     if (amountPerMinute <= 0) return 0; // prevent divide-by-zero
     const totalMinutes = walletAmount / amountPerMinute;
     const totalSeconds = totalMinutes * 60;
     return Math.floor(totalSeconds); // floor to nearest second
   }
-  
+
   return (
     <SafeAreaView
       style={{
@@ -177,7 +178,7 @@ const ProfileDetails = ({ route }) => {
                 aspectRatio: 1 / 1.3,
                 borderRadius: SIZES.radius,
               }}
-              source={{ uri: activeProfileDetails?.profilePhoto || activeProfileDetails?.profilePhotos?.[0]?.url }}
+              source={{ uri: activeProfileDetails?.profilePhoto || activeProfileDetails?.profilePhotos?.[0] }}
             />
             <LinearGradient
               colors={["rgba(0,0,0,0)", "rgba(0,0,0,0)", "rgba(0,0,0,.7)"]}
@@ -204,10 +205,12 @@ const ProfileDetails = ({ route }) => {
                     position: "absolute",
                     bottom: 60,
                     left: 0,
-                    // flexDirection: "row",
-                    // alignItems: "center",
+                    flexDirection: "row",
+                    alignItems: "center",
                     // paddingHorizontal: 10,
+                    justifyContent: 'space-between',
                     paddingVertical: 3,
+                    width: '100%'
                   }}
                 >
                   <Text style={{ ...FONTS.h6, color: COLORS.white }}>
@@ -231,8 +234,11 @@ const ProfileDetails = ({ route }) => {
                       {activeProfileDetails?.currentAddress}
                     </Text>
                   </View> */}
+                  <Text style={{ ...FONTS.fontBold, color: COLORS.white, }} numberOfLines={1}>
+                      ₹ {activeProfileDetails?.rate}
+                    </Text>
                 </View>
-                <View
+                {/* <View
                   style={{
                     flex: 1,
                     position: "absolute",
@@ -243,16 +249,19 @@ const ProfileDetails = ({ route }) => {
                     // paddingHorizontal: 10,
                     paddingVertical: 3,
                   }}
-                >
-                  <Text style={{ ...FONTS.h6, color: COLORS.white, display: "none" }}>
-                    {activeProfileDetails.name}, {activeProfileDetails.age}
-                  </Text>
+                > */}
+                  {/* <Text style={{ ...FONTS.h6, color: COLORS.white, display: "none" }}>
+                    {activeProfileDetails.name}, {activeProfileDetails.dob}
+                  </Text> */}
 
                   {/* <Text style={{ ...FONTS.font, color: COLORS.white, opacity: 0.75 }} numberOfLines={1}>
                     {item.about}
                   </Text> */}
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 5, marginTop: 2 }}>
-                    {activeProfileDetails?.permanentAddress && (
+                  {/* <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'center', backgroundColor:'red' }}>
+                  <Text style={{ ...FONTS.h6, color: COLORS.white, display: "none" }}>
+                    {activeProfileDetails.name}, {activeProfileDetails.dob}
+                  </Text> */}
+                    {/* {activeProfileDetails?.permanentAddress && (
                       <Image
                         style={{
                           height: 14,
@@ -262,12 +271,12 @@ const ProfileDetails = ({ route }) => {
                         }}
                         source={IMAGES.home3}
                       />
-                    )}
-                    <Text style={{ ...FONTS.font, color: COLORS.white, opacity: 0.75 }} numberOfLines={1}>
-                      {activeProfileDetails?.permanentAddress}
-                    </Text>
-                  </View>
-                </View>
+                    )} */}
+                    {/* <Text style={{ ...FONTS.fontBold, color: COLORS.white, }} numberOfLines={1}>
+                      ₹ {activeProfileDetails?.rate}
+                    </Text> */}
+                  {/* </View>
+                </View> */}
                 {/* <TouchableOpacity
                   onPress={() =>
                     navigation.navigate("SingleChat", {
@@ -352,9 +361,10 @@ const ProfileDetails = ({ route }) => {
               //     },
               //   })
               // }
-              onPress={async()=>{
+              onPress={async () => {
                 const token = await servicesgenerateAgoraToken(`channel_${activeProfileDetails?._id}`, activeProfileDetails?._id);
-                navigation.navigate("SocialConnect",{mode: "chat",channelName: `channel_${activeProfileDetails?._id}`,localUid: activeProfileDetails?._id, token})}}
+                navigation.navigate("SocialConnect", { mode: "chat", channelName: `channel_${activeProfileDetails?._id}`, localUid: activeProfileDetails?._id, token })
+              }}
             // onPress={async () => {})}
             >
               <Image
@@ -380,28 +390,28 @@ const ProfileDetails = ({ route }) => {
                 right: "42.5%",
                 backgroundColor: COLORS.primary,
               }}
-              onPress={async()=>{
-                try { 
-                  const maxDuration = getValidSeconds(currentUser?.walletAmount, activeProfileDetails?.rate);  
+              onPress={async () => {
+                try {
+                  const maxDuration = getValidSeconds(currentUser?.walletAmount, activeProfileDetails?.rate);
                   const channelName = await getOrCreateChannel(currentUser?.id, activeProfileDetails?.id)
-                  const token = await services.createConnect({channelName : channelName, uid: activeProfileDetails?.id, mode: "video", callerUid: currentUser?.id, callerName: currentUser?.name});
-                  navigation.navigate("SocialConnect",{mode: "video",channelName: channelName ,localUid: activeProfileDetails?.id,token, recieverName: activeProfileDetails?.name, maxDuration, role: currentUser?.role,  rate:activeProfileDetails?.rate, wallet: currentUser?.wallet})
+                  const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "video", callerUid: currentUser?.id, callerName: currentUser?.name });
+                  navigation.navigate("SocialConnect", { mode: "video", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet })
                 } catch (error) {
-                  console.log(error,"error token")
+                  console.log(error, "error token")
                 }
               }}
-              // onPress={async () => {
-              //   dispatch(
-              //     Actions?.updateFeedUserInfo({
-              //       type: saveUsers === IMAGES.star ? "unsave" : "save",
-              //       userId: activeProfileDetails?._id || activeProfileDetails?.id,
-              //     }),
-              //   );
-              //   // ToastAndroid.show(
-              //   //   `User ${saveUsers === IMAGES.star ? "remove from favorite list" : "added to favorite list"}`,
-              //   //   ToastAndroid.SHORT,
-              //   // );
-              // }}
+            // onPress={async () => {
+            //   dispatch(
+            //     Actions?.updateFeedUserInfo({
+            //       type: saveUsers === IMAGES.star ? "unsave" : "save",
+            //       userId: activeProfileDetails?._id || activeProfileDetails?.id,
+            //     }),
+            //   );
+            //   // ToastAndroid.show(
+            //   //   `User ${saveUsers === IMAGES.star ? "remove from favorite list" : "added to favorite list"}`,
+            //   //   ToastAndroid.SHORT,
+            //   // );
+            // }}
             >
               <Image
                 style={{
@@ -439,19 +449,19 @@ const ProfileDetails = ({ route }) => {
               //     navigation.goBack();
               //   }
               // }}
-              onPress={async()=>{
+              onPress={async () => {
                 try {
-                  const maxDuration = getValidSeconds(currentUser?.wallet, activeProfileDetails?.rate); 
-                  console.log(maxDuration,"maxDuration")  
+                  const maxDuration = getValidSeconds(currentUser?.wallet, activeProfileDetails?.rate);
+                  console.log(maxDuration, "maxDuration")
                   const channelName = await getOrCreateChannel(currentUser?.id, activeProfileDetails?.id)
-                  const token = await services.createConnect({channelName : channelName, uid: activeProfileDetails?.id, mode: "voice", callerUid: currentUser?.id, callerName: currentUser?.name});
-                  navigation.navigate("SocialConnect",{mode: "voice",channelName: channelName ,localUid: activeProfileDetails?.id,token, recieverName: activeProfileDetails?.name, callerName: currentUser?.name, callerId: currentUser?.id, maxDuration, role: currentUser?.role, rate:activeProfileDetails?.rate, wallet: currentUser?.wallet})
+                  const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "voice", callerUid: currentUser?.id, callerName: currentUser?.name });
+                  navigation.navigate("SocialConnect", { mode: "voice", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, callerName: currentUser?.name, callerId: currentUser?.id, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet })
                 } catch (error) {
-                  console.log(error,"error token")
+                  console.log(error, "error token")
                 }
               }}
-              // onPress={()=>navigation.navigate("SocialConnectResponse")}
-              >
+            // onPress={()=>navigation.navigate("SocialConnectResponse")}
+            >
               <Image
                 style={{
                   height: 28,
@@ -477,21 +487,21 @@ const ProfileDetails = ({ route }) => {
             </View>
           </View>
           <View style={{ paddingHorizontal: 8 }}>
-            <View
+            {/* <View
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
                 alignItems: "center",
                 paddingVertical: 4,
               }}
-            >
-              {/* <Text style={{ ...FONTS.h6, color: COLORS.textLight }}>{activeProfileDetails?.gender}</Text> */}
-              {/* <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 }}>
+            > */}
+            {/* <Text style={{ ...FONTS.h6, color: COLORS.textLight }}>{activeProfileDetails?.gender}</Text> */}
+            {/* <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 }}>
                 <FeatherIcon color={COLORS.textLight} size={20} name="eye" />
                 <Text style={{ ...FONTS.h6, color: COLORS.textLight }}>{activeProfileDetails?.genderPreference}</Text>
               </View> */}
-            </View>
-            <View
+            {/* </View> */}
+            {/* <View
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
@@ -500,17 +510,135 @@ const ProfileDetails = ({ route }) => {
               }}
             >
               <Text style={{ ...FONTS.h6, color: COLORS.textLight }}>{activeProfileDetails?.lookingFor}</Text>
+            </View> */}
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                marginBottom: 8,
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <Text style={{ ...FONTS.h6, fontSize: 15, color: colors.title, marginBottom: 4 }}>Rating</Text>
+              <View style={{ flexDirection: 'row' }}>
+                {Array.from({ length: 5 }).map((_, index) => {
+                  const starValue = index + 1;
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handlePress(starValue)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[{
+                        fontSize: 24,
+                        marginHorizontal: 4,
+                      }, starValue <= 4 ? {
+                        color: COLORS.primary,
+                      } : {
+                        color: '#ccc',
+                      }]}>
+                        ★
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </View>
-            <Text style={{ ...FONTS.h6, fontSize: 15, color: colors.title, marginBottom: 2 }}>About Me</Text>
-            <Text style={{ ...FONTS.font, color: colors.textLight, lineHeight: 18, marginBottom: 15 }}>
+            {activeProfileDetails?.about?.length !== 0 && (<Text style={{ ...FONTS.h6, fontSize: 15, color: colors.title, marginBottom: 2 }}>About Me</Text>)}
+            {activeProfileDetails?.about?.length !== 0 && (<Text style={{ ...FONTS.font, color: colors.textLight, lineHeight: 18, marginBottom: 15 }}>
               {activeProfileDetails?.about}
-            </Text>
-           
-       
-           
-          
-        
+            </Text>)}
+            <Text style={{ ...FONTS.h6, fontSize: 15, color: colors.title, marginBottom: 4 }}>Languages</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                marginBottom: 8,
+              }}
+            >
+              {["hindi", "marathi", "english"].map((data, index) => {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={{
+                      backgroundColor: "rgba(0,0,0,0.03)",
+                      marginRight: 8,
+                      marginBottom: 8,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: colors.borderColor,
+                      borderRadius: 30,
+                      paddingHorizontal: 12,
+                      paddingVertical: 4,
+                    }}
+                  >
+                    <Text style={{ ...FONTS.font, color: colors.title, top: -1 }}>{data}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            <Text style={{ ...FONTS.h6, fontSize: 15, color: colors.title, marginBottom: 4 }}>Comments</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                marginBottom: 8,
+                // justifyContent: 'space-between',
+                // alignItems: 'center'
+              }}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  borderWidth: 1,
+                  borderColor: COLORS.borderColor,
+                  paddingHorizontal: 16,
+                  paddingVertical: 6,
+                  borderRadius: 10,
+
+                  // Shadow for iOS
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+
+                  // Elevation for Android
+                  elevation: 4,
+                  backgroundColor: '#fff', // Required for shadow to be visible
+                }}
+              >
+                <Text
+                  style={{
+                    ...FONTS.font,
+                    ...FONTS.fontBold,
+                    color: colors.title,
+                    paddingBottom: 8,
+                    marginBottom: 5,
+                    borderBottomWidth: 0.5,
+                    borderBottomColor: colors.borderColor,
+                  }}
+                >
+                  Set Rate
+                </Text>
+                <Text
+                  style={{
+                    ...FONTS.font,
+                    // ...FONTS.fontBold,
+                    color: colors.title,
+                    paddingBottom: 8,
+                    // marginBottom: 5,
+                    // borderBottomWidth: 1,
+                    // borderBottomColor: colors.borderColor,
+                  }}
+                >
+                  This is a sample text for comment
+                </Text>
+              </View>
+            </View>
           </View>
+          <GradientBtn title="Call Now"/> 
         </View>
       </ScrollView>
     </SafeAreaView>

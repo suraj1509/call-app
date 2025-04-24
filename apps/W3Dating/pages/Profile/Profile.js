@@ -35,6 +35,8 @@ import * as userServices from "../../../../services/user";
 import * as fcmServices from "../../../../services/fcm";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import {Shadow} from 'react-native-shadow-2';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Profile = ({ navigation, route }) => {
   const user = useSelector((state) => state?.user?.currentUser);
@@ -73,10 +75,10 @@ const Profile = ({ navigation, route }) => {
     //   id: "3",
     //   title: "Location",
     // },
-    {
-      id: "4",
-      title: "Terms of Service",
-    },
+    // {
+    //   id: "4",
+    //   title: "Terms of Service",
+    // },
     {
       id: "5",
       title: "Privacy Policy",
@@ -236,11 +238,11 @@ const Profile = ({ navigation, route }) => {
                       strokeCap={"round"}
                     />
                   </View>
-                  {user.profilePhotos[0] ? (<Image
+                  {user.profilePhotos?.length > 0 ? (<Image
                     style={{
                       height: 120,
                       width: 120,
-                      borderRadius: 100,
+                      borderRadius: 120,
                       position: "absolute",
                     }}
                     source={{ uri: user.profilePhotos[0] }}
@@ -562,6 +564,68 @@ const Profile = ({ navigation, route }) => {
                     </View>
                   </View>
                 </Modal>
+                 <View
+                                            // key={index}
+                                            style={{
+                                                // paddingHorizontal:20,
+                                                // paddingTop:15,
+                                                // backgroundColor:"red",
+                                                // width: '100%'
+                                                marginVertical: 10
+                                               
+                                            }}
+                                        >
+                                            <Shadow
+                                                style={[{
+                                                    shadowColor:["#ea3d85","#ff864e"][0],
+                                                    shadowOffset: {
+                                                        width: 0,
+                                                        height: 5,
+                                                    },
+                                                    shadowOpacity: .4,
+                                                    shadowRadius: 8,
+                                                },Platform.OS === 'ios' && {
+                                                    backgroundColor: ["#ea3d85","#ff864e"][0],
+                                                    borderRadius:8,
+                                                }]}
+                                            >
+                                                <LinearGradient
+                                                    colors={["#ea3d85","#ff864e"]}
+                                                    start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                                                    style={{
+                                                        paddingHorizontal:30,
+                                                        paddingVertical:16,
+                                                        borderRadius:34,
+                                                        flexDirection:'row',
+                                                        justifyContent:'center',
+                                                        alignItems:'center',
+                                                        width: '100%'
+                                                    }}
+                                                >
+                                                    <Image
+                                                        style={{
+                                                            tintColor:COLORS.white,
+                                                            width:200,
+                                                            resizeMode:'contain',
+                                                            height:25,
+                                                        }}
+                                                        source={IMAGES.tinder}
+                                                    />
+                                                    <View
+                                                        style={{
+                                                            borderRadius:20,
+                                                            paddingHorizontal:20,
+                                                            paddingVertical: 8,
+                                                            top: 2,
+                                                            backgroundColor:'#fff',
+                                                            marginLeft:6,
+                                                        }}
+                                                    >
+                                                        <Text style={{...FONTS.fontJostBold,color:["#ea3d85","#ff864e"][0],...FONTS.fontBold}}>Refer</Text>
+                                                    </View>
+                                                </LinearGradient>
+                                            </Shadow>
+                                        </View>
                 {profileData.map((data, index) => {
                   return (
                     <TouchableOpacity
@@ -695,7 +759,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   profileArea: {
-    paddingBottom: 10,
+    // paddingBottom: 10,
     paddingHorizontal: 15,
   },
   profileProgress: {

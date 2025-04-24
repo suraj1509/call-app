@@ -29,7 +29,7 @@ const DrawerMenu = () => {
             backgroundColor: COLORS.primary,
           }}
         >
-          {user.profilePhotos[0] ? (<View
+          {user?.profilePhotos?.length ? (<View
             style={{
               borderRadius: 50,
               borderWidth: 2,

@@ -14,15 +14,15 @@ import ButtonLight from '../../../../app/components/Button/ButtonLight';
 
 
 const Credit = ({navigation}) => {
-  const BASE_AMOUNT = 100; // You can easily change this later
-  const optionsCount = 6;  // How many options you want to show
+  const BASE_AMOUNT = 99; // You can easily change this later
+  const optionsCount = 8;  // How many options you want to show
   const amount = useSelector((state) => state?.user?.currentUser?.wallet);
   const dispatch = useDispatch();
 const theme = useTheme();
   const { colors } = theme;
   const [selectedAmount, setSelectedAmount] = useState(null);
 
-  const rechargeOptions = Array.from({ length: optionsCount }, (_, i) => (i + 1) * BASE_AMOUNT);
+  const rechargeOptions = Array.from({ length: optionsCount }, (_, i) => BASE_AMOUNT + i * 100);
 
   const handleRecharge = (amount) => {
     setSelectedAmount(amount);
@@ -84,7 +84,7 @@ const handleAddRecharge = async() => {
                        <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
                     </TouchableOpacity>
           </View>
-    <View style={[GlobalStyleSheet.container,{flex: 1, padding: 40,justifyContent: 'center', alignItems: 'center'}]}>
+    <View style={[GlobalStyleSheet.container,{flex: 1, paddingHorizontal: 40,justifyContent: 'center', alignItems: 'center'}]}>
       <View>
       <FlatList
         data={rechargeOptions}
