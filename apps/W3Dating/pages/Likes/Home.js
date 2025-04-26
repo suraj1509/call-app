@@ -92,7 +92,7 @@ const Home = ({ navigation }) => {
                       <Image
                         style={{
                           width: "100%",
-                          height: 200,
+                          height: 220,
                           borderRadius: 10,
                           resizeMode:'cover',
                         }}

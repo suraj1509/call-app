@@ -575,7 +575,7 @@ const Profile = ({ navigation, route }) => {
                                                
                                             }}
                                         >
-                                            <Shadow
+                                            {/* <Shadow
                                                 style={[{
                                                     shadowColor:["#ea3d85","#ff864e"][0],
                                                     shadowOffset: {
@@ -588,7 +588,7 @@ const Profile = ({ navigation, route }) => {
                                                     backgroundColor: ["#ea3d85","#ff864e"][0],
                                                     borderRadius:8,
                                                 }]}
-                                            >
+                                            > */}
                                                 <LinearGradient
                                                     colors={["#ea3d85","#ff864e"]}
                                                     start={{x: 0, y: 0}} end={{x: 1, y: 0}}
@@ -605,7 +605,7 @@ const Profile = ({ navigation, route }) => {
                                                     <Image
                                                         style={{
                                                             tintColor:COLORS.white,
-                                                            width:200,
+                                                            width: '60%',
                                                             resizeMode:'contain',
                                                             height:25,
                                                         }}
@@ -624,7 +624,7 @@ const Profile = ({ navigation, route }) => {
                                                         <Text style={{...FONTS.fontJostBold,color:["#ea3d85","#ff864e"][0],...FONTS.fontBold}}>Refer</Text>
                                                     </View>
                                                 </LinearGradient>
-                                            </Shadow>
+                                            {/* </Shadow> */}
                                         </View>
                 {profileData.map((data, index) => {
                   return (

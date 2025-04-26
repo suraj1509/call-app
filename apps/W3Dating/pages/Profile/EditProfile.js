@@ -660,7 +660,7 @@ const EditProfile = ({ navigation }) => {
               </View>
             </View>
 
-            {/* <View
+            <View
               style={[
                 GlobalStyleSheet.card,
                 {
@@ -682,7 +682,42 @@ const EditProfile = ({ navigation }) => {
                   borderBottomColor: colors.borderColor,
                 }}
               >
-                Interests
+                Languages Spoken
+              </Text>
+              <List.Item
+                onPress={() => {
+                  profileSheet.current.open();
+                }}
+                style={{
+                  marginHorizontal: -15,
+                }}
+                titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
+                title={user?.interests?.map((interest) => interest?.title).join(", ") || "Add Interests"}
+              />
+            </View>  
+            <View
+              style={[
+                GlobalStyleSheet.card,
+                {
+                  backgroundColor: colors.cardBg,
+                  borderColor: colors.borderColor,
+                  paddingBottom: 5,
+                  marginTop: 25,
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  ...FONTS.font,
+                  ...FONTS.fontBold,
+                  color: colors.title,
+                  paddingBottom: 8,
+                  marginBottom: 5,
+                  borderBottomWidth: 1,
+                  borderBottomColor: colors.borderColor,
+                }}
+              >
+                Time Slots
               </Text>
               <List.Item
                 onPress={() => {
@@ -695,7 +730,7 @@ const EditProfile = ({ navigation }) => {
                 title={user?.interests?.map((interest) => interest?.title).join(", ") || "Add Interests"}
               />
             </View>
-            <View
+            {/* <View
               style={[
                 GlobalStyleSheet.card,
                 {
