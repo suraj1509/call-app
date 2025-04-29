@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // import Home from "../pages/Home/Home";
 import Home from "../pages/Likes/Home";
-import History from "../pages/Chats/History";
+import History from "../pages/Likes/History";
 import Profile from "../pages/Profile/Profile";
 import CustomNavigation from "./CustomNavigation";
 import Credit from "../pages/Likes/Credit";

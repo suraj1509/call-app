@@ -96,7 +96,7 @@ const Home = ({ navigation }) => {
                           borderRadius: 10,
                           resizeMode:'cover',
                         }}
-                        source={{uri: data?.profilePhotos[0]}}
+                        source={data?.profilePhotos[0] ? {uri: data?.profilePhotos[0]} : IMAGES?.avtar2}
                       />
                       <View style={{ position: 'absolute', left: 2, top: 2, flexDirection: 'row', justifyContent: 'space-between', width: '96%'}}>
                         <View style={{backgroundColor: `${COLORS.dark}80`, width: 60, flexDirection:'row', justifyContent:'space-around', alignItems:'center',borderRadius: 10, padding: 2}}>

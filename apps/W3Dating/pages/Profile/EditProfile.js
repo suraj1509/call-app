@@ -22,9 +22,6 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import Header from "../../../../app/layout/Header";
 import { GlobalStyleSheet } from "../../../../app/constants/StyleSheet";
 import { COLORS, FONTS, IMAGES, SIZES } from "../../../../app/constants/theme";
-import InterestsSheet from "../components/IntrestSheet";
-import RelationshipGoalsSheet from "../components/RelationshipGoalsSheet";
-import SexualOrientationSheet from "../components/SexualOrientationSheet";
 import storage from "@react-native-firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
 import * as Actions from "../../../../redux/Actions";
@@ -33,6 +30,12 @@ import AboutSheet from "../components/AboutSheet";
 import ImageResizer from "react-native-image-resizer";
 import * as services from "../../../../services/user";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import TimeSlotSheet from "../components/TimeSlotSheet";
+import ToggleStyle1 from "../../../../app/components/Toggles/ToggleStyle1";
+import ToggleStyle2 from "../../../../app/components/Toggles/ToggleStyle2";
+import ToggleStyle3 from "../../../../app/components/Toggles/ToggleStyle3";
+import ToggleStyle4 from "../../../../app/components/Toggles/ToggleStyle4";
+import ToggleStyle5 from "../../../../app/components/Toggles/ToggleStyle5";
 
 const EditProfile = ({ navigation }) => {
   const user = useSelector((state) => state?.user?.currentUser);
@@ -47,7 +50,8 @@ const EditProfile = ({ navigation }) => {
   ];
   // const profileSheet = useRef();
   // const sheetRef = useRef();
-  // const languageSheet = useRef();
+  const languageSheet = useRef();
+  const timeSlotSheet = useRef();
   const aboutSheet = useRef();
   const dispatch = useDispatch();
 
@@ -267,14 +271,15 @@ const EditProfile = ({ navigation }) => {
     }
   };
 
-  // const SaveRelationShipGoals = async () => {
-  //   dispatch(Actions?.updateCurrentUser({ preferences: { lookingFor } }));
-  // };
+  const SaveRelationShipGoals = async () => {
+    dispatch(Actions?.updateCurrentUser({ preferences: { lookingFor } }));
+  };
 
   return (
     <>
-      {/* <InterestsSheet sheetRef={profileSheet} />
-      <LanguageSheet sheetRef={languageSheet} /> */}
+      {/* <InterestsSheet sheetRef={profileSheet} /> */}
+      <LanguageSheet sheetRef={languageSheet} />
+      <TimeSlotSheet sheetRef={timeSlotSheet} />
       <AboutSheet sheetRef={aboutSheet} />
 
       {/* <RBSheet
@@ -686,13 +691,13 @@ const EditProfile = ({ navigation }) => {
               </Text>
               <List.Item
                 onPress={() => {
-                  profileSheet.current.open();
+                  languageSheet.current.open();
                 }}
                 style={{
                   marginHorizontal: -15,
                 }}
                 titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
-                title={user?.interests?.map((interest) => interest?.title).join(", ") || "Add Interests"}
+                title={user?.interests?.map((interest) => interest?.title).join(", ") || "Add Languages"}
               />
             </View>  
             <View
@@ -721,13 +726,13 @@ const EditProfile = ({ navigation }) => {
               </Text>
               <List.Item
                 onPress={() => {
-                  profileSheet.current.open();
+                  timeSlotSheet.current.open();
                 }}
                 style={{
                   marginHorizontal: -15,
                 }}
                 titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
-                title={user?.interests?.map((interest) => interest?.title).join(", ") || "Add Interests"}
+                title={user?.interests?.map((interest) => interest?.title).join(", ") || "Select slots"}
               />
             </View>
             {/* <View
@@ -807,28 +812,71 @@ const EditProfile = ({ navigation }) => {
               <View style={{alignItems:"center"}}>
 
                <MultiSlider
-                                      trackStyle={{height:4,borderRadius:2,backgroundColor:'rgba(142,165,200,.3)'}}
-                                      selectedStyle={{
-                                          backgroundColor:COLORS.primary3,
-                                      }}
-                                      values={rate}
-                                      markerStyle={{
-                                          backgroundColor:COLORS.white,
-                                          top:1,
-                                          height:16,
-                                          width:16,
-                                          borderWidth:3,
-                                          borderColor:COLORS.primary3,
-                                      }}
-                                      onValuesChange={(val) => setRate(val)}
-                                      onValuesChangeFinish={(val) => {
-                                        dispatch(Actions?.updateCurrentUser({ rate: val[0] }));
-                                      }}
-                                      min={5}
-                                      sliderLength={SIZES.width - 100}
-                                      max={20}
-                                  />
+                trackStyle={{height:4,borderRadius:2,backgroundColor:'rgba(142,165,200,.3)'}}
+                selectedStyle={{
+                    backgroundColor:COLORS.primary3,
+                }}
+                values={rate}
+                markerStyle={{
+                    backgroundColor:COLORS.white,
+                    top:1,
+                    height:16,
+                    width:16,
+                    borderWidth:3,
+                    borderColor:COLORS.primary3,
+                }}
+                onValuesChange={(val) => setRate(val)}
+                onValuesChangeFinish={(val) => {
+                  dispatch(Actions?.updateCurrentUser({ rate: val[0] }));
+                }}
+                min={5}
+                sliderLength={SIZES.width - 100}
+                max={20}
+            />
               </View>
+            </View>
+            <View
+              style={[
+                GlobalStyleSheet.card,
+                {
+                  backgroundColor: colors.cardBg,
+                  borderColor: colors.borderColor,
+                  // paddingBottom: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  ...FONTS.font,
+                  ...FONTS.fontBold,
+                  color: colors.title,
+                  // paddingBottom: 8,
+                  // marginBottom: 5,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: colors.borderColor,
+                }}
+              >
+                Vacation Mode
+              </Text>
+              <ToggleStyle3/>
+              {/* <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => {
+                  aboutSheet.current.open();
+                }}
+              >
+                <List.Item
+                  style={{
+                    marginHorizontal: -15,
+                  }}
+                  right={() => <FeatherIcon size={18} color={colors.text} name="edit" />}
+                  titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
+                  title={user?.about}
+                />
+              </TouchableOpacity> */}
             </View>
             <View
               style={[

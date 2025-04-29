@@ -33,6 +33,8 @@ import database, { onValue, set } from "@react-native-firebase/database";
 import SocialConnectResponse from "../Utilities/SocialConnectResponse";
 import { useNavigation } from "@react-navigation/native";
 import Form from "./Form";
+import Earnings from "./Likes/Earnings";
+import EarningDetails from "./Likes/EarningDetails";
 
 const StackComponent = createNativeStackNavigator();
 
@@ -113,6 +115,8 @@ const W3DatingPage = ({ initialLoading = false, skipInitialLaunch = false, isLog
         <StackComponent.Screen name={"Notifications"} component={Notifications} /> */}
         {/* <StackComponent.Screen name={"Languages"} component={Languages} /> */}
         <StackComponent.Screen name={"EditProfile"} component={EditProfile} />
+        <StackComponent.Screen name={"Earnings"} component={Earnings} />
+        <StackComponent.Screen name={"EarningDetails"} component={EarningDetails} />
         {/* <StackComponent.Screen name={"Settings"} component={Settings} /> */}
         <StackComponent.Screen name={"ProfileDetails"} component={ProfileDetails} />
         <StackComponent.Screen name={"CurrentUserProfileDetails"} component={CurrentUserProfileDetails} />

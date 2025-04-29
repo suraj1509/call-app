@@ -96,11 +96,16 @@ const DrawerMenu = () => {
             <Text style={[styles.navText, { color: colors.text }]}>Home</Text>
             <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
           </TouchableOpacity>
-          {/* <TouchableOpacity onPress={() => navigation.navigate("Components")} style={[styles.navLink]}>
+          <TouchableOpacity onPress={() => navigation.navigate("Earnings")} style={[styles.navLink]}>
             <SvgXml style={{ marginRight: 10 }} xml={ICONS.components} />
-            <Text style={[styles.navText, { color: colors.text }]}>Components</Text>
+            <Text style={[styles.navText, { color: colors.text }]}>Earnings Snapshot</Text>
             <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
+           <TouchableOpacity onPress={() => navigation.navigate("Ratings")} style={[styles.navLink, {gap: 12}]}>
+            <Image source={IMAGES.unstar} style={{height: 24, width: 24, tintColor:"#bfc9da"}}/>
+            <Text style={[styles.navText, { color: colors.text }]}>Review & Ratings</Text>
+            <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("EditProfile")} style={[styles.navLink]}>
             <SvgXml style={{ marginRight: 12 }} height={22} width={22} stroke={"#bfc9da"} xml={ICONS.setting} />
             <Text style={[styles.navText, { color: colors.text }]}>Settings</Text>
