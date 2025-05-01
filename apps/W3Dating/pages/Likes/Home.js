@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Modal, Dimensions, TouchableWithoutFeedback } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import LinearGradient from "react-native-linear-gradient";
 import { COLORS, FONTS, IMAGES, SIZES } from "../../../../app/constants/theme";
@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
 import ButtonLight from "../../../../app/components/Button/ButtonLight";
+import CheckList from "../components/CheckList";
+import GradientBtn from "../components/GradientBtn";
 
 const Home = ({ navigation }) => {
   const theme = useTheme();
@@ -23,6 +25,9 @@ const Home = ({ navigation }) => {
   const role = useSelector((state) => state.user.currentUser?.role)
   const [feed, setFeed] = React.useState([])
   const amount = useSelector((state) => state?.user?.currentUser?.wallet);
+  const [modal, setModal] = React.useState(false)
+  const { height } = Dimensions.get("window");
+  const [filter, setFilter] = React.useState(0)
 
   React.useEffect(() => {
     dispatch(Actions?.fetchCurrentUser());
@@ -68,16 +73,139 @@ const Home = ({ navigation }) => {
           Users
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Likes")}
-          style={[GlobalStyleSheet.headerBtn, { borderColor: colors.text, justifyContent:"center", alignItems:"center", flexDirection:"row", width:80 }]}
-        >
-          <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.success }}>
-                          {amount}
-                        </Text>
-           <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
-        </TouchableOpacity>
+            onPress={() => setModal(true)}
+            style={[GlobalStyleSheet.headerBtn, { borderColor: colors.borderColor }]}
+          >
+            <Image
+              style={{
+                height: 22,
+                width: 22,
+                tintColor: colors.title,
+              }}
+              source={IMAGES.filter}
+            />
+          </TouchableOpacity>
       </View>    
         <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+        <Modal visible={modal} transparent onLayout={() => setModal(false)}>
+            <TouchableWithoutFeedback onPress={() => setModal(false)}>
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: "rgba(0,0,0,0.5)",
+                      justifyContent: "center",
+                      alignContent: "center",
+                     
+                    }}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: colors.cardBg,
+                        borderWidth: 1,
+                        borderColor: colors.border,
+                        margin: 20,
+                        borderRadius: 10,
+                        padding: 16,
+                        gap: 10,
+                        height: height * 0.55,
+                        overflow: "hidden",
+                        // backgroundColor: "blue",
+                      }}
+                    >
+                      <View style={{ padding: 16 }}>
+                        <Text
+                          style={{
+                            ...FONTS.h5,
+                            // flex: 1,
+                            textAlign: "center",
+                            color: colors.title,
+                          }}
+                        >
+                          Filter
+                        </Text>
+                      </View>
+                   
+                        <View style={{ justifyContent: "center", alignItems: "center" }}>
+                      {["Newest", "Online Now", "Top Rated", "Age Range", "Language"]?.map((data, index) => {
+                        return (
+                        <CheckList
+                            onPress={() => {
+                              setFilter(index)
+                            setModal(false)
+                            }}
+                            item={data}
+                            checked={index === filter ?  true: false}
+                            key={index}
+                        />
+                        );
+                    })}
+                      </View>
+                    {/* <GradientBtn title={"Apply Filter"}/> */}
+                      {/* <View
+                        style={{
+                          padding: 16,
+                          flexDirection: "row",
+                          justifyContent: "space-around",
+                          // backgroundColor: "red",
+                        }}
+                      >
+                        <View style={{ width: "40%" }}>
+                          <TouchableOpacity
+                            // onPress={() => setDeleteModal(false)}
+                            activeOpacity={0.5}
+                            style={{
+                              width: "100%",
+                              borderRadius: 40,
+                              backgroundColor: theme?.dark ? "#F5F5F520" : "#F5F5F5",
+                              height: 45,
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                ...FONTS.fontMedium,
+                                fontSize: 16,
+                                color: theme?.dark ? COLORS.white : "#141414",
+                              }}
+                            >
+                              Close
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                        <View style={{ width: "40%" }}>
+                          <TouchableOpacity
+                            // onPress={async () => {
+                            
+                            // }}
+                            activeOpacity={0.5}
+                            style={{
+                              width: "100%",
+                              borderRadius: 40,
+                              //backgroundColor:'#F5F5F5',
+                              borderWidth: 1,
+                              borderColor: COLORS.primary,
+                              height: 45,
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            {!true ? (
+                              <Text style={{ ...FONTS.fontSemiBold, fontSize: 16, color: COLORS.primary }}>
+                                Confirm
+                              </Text>
+                            ) : (
+                              <View style={GlobalStyleSheet.spinner}>
+                                <ActivityIndicator size="small" color={COLORS.primary} />
+                              </View>
+                            )}
+                          </TouchableOpacity>
+                        </View>
+                      </View> */}
+                    </View>
+                  </View>
+                  </TouchableWithoutFeedback>
+                </Modal> 
           <View style={GlobalStyleSheet.container}>
             <View style={[GlobalStyleSheet.row]}>
               {feed?.map((data, index) => {

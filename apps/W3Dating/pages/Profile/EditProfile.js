@@ -36,18 +36,11 @@ import ToggleStyle2 from "../../../../app/components/Toggles/ToggleStyle2";
 import ToggleStyle3 from "../../../../app/components/Toggles/ToggleStyle3";
 import ToggleStyle4 from "../../../../app/components/Toggles/ToggleStyle4";
 import ToggleStyle5 from "../../../../app/components/Toggles/ToggleStyle5";
+import ToggleStyleRevert from "../../../../app/components/Toggles/ToggleStyleRevert";
 
 const EditProfile = ({ navigation }) => {
   const user = useSelector((state) => state?.user?.currentUser);
   const { colors } = useTheme();
-  const genderData = [
-    "Long-term partner",
-    "Long-term, open to short",
-    "Short-term, open to long",
-    "Short-term fun",
-    "New friends",
-    "Stil figuring it out",
-  ];
   // const profileSheet = useRef();
   // const sheetRef = useRef();
   const languageSheet = useRef();
@@ -56,8 +49,6 @@ const EditProfile = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const [imageData, setImageData] = useState(user?.profilePhotos || []);
-  const [sheetType, setSheetType] = useState("");
-  const [loader, setLoader] = useState({});
   const [loader0, setLoader0] = React.useState(false);
   const [loader1, setLoader1] = React.useState(false);
   const [loader2, setLoader2] = React.useState(false);
@@ -72,7 +63,6 @@ const EditProfile = ({ navigation }) => {
   const [image5, setImage5] = React.useState("");
   const [upload, setUpload] = React.useState(false);
   const [rate, setRate] = useState([user?.rate] || [5]);
-  const [lookingFor, setLookingFor] = useState(user?.preferences?.lookingFor);
 
   React.useEffect(() => {
     if (user?.profilePhotos) {
@@ -269,10 +259,6 @@ const EditProfile = ({ navigation }) => {
     } else {
       ToastAndroid.show("Atleast one photo of the user should be available");
     }
-  };
-
-  const SaveRelationShipGoals = async () => {
-    dispatch(Actions?.updateCurrentUser({ preferences: { lookingFor } }));
   };
 
   return (
@@ -862,6 +848,48 @@ const EditProfile = ({ navigation }) => {
                 Vacation Mode
               </Text>
               <ToggleStyle3/>
+              {/* <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => {
+                  aboutSheet.current.open();
+                }}
+              >
+                <List.Item
+                  style={{
+                    marginHorizontal: -15,
+                  }}
+                  right={() => <FeatherIcon size={18} color={colors.text} name="edit" />}
+                  titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
+                  title={user?.about}
+                />
+              </TouchableOpacity> */}
+            </View><View
+              style={[
+                GlobalStyleSheet.card,
+                {
+                  backgroundColor: colors.cardBg,
+                  borderColor: colors.borderColor,
+                  // paddingBottom: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  ...FONTS.font,
+                  ...FONTS.fontBold,
+                  color: colors.title,
+                  // paddingBottom: 8,
+                  // marginBottom: 5,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: colors.borderColor,
+                }}
+              >
+                Turn Off Notifications
+              </Text>
+              <ToggleStyleRevert />
               {/* <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => {

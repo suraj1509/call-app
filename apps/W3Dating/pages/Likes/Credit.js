@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, SafeAreaView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, SafeAreaView, Image, TextInput, Dimensions } from 'react-native';
 import GradientBtn from '../components/GradientBtn';
-import { COLORS, FONTS } from '../../../../app/constants/theme';
+import { COLORS, FONTS, IMAGES, SIZES } from '../../../../app/constants/theme';
 import { useTheme } from '@react-navigation/native';
 import { GlobalStyleSheet } from '../../../../app/constants/StyleSheet';
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -15,9 +15,10 @@ import ButtonLight from '../../../../app/components/Button/ButtonLight';
 
 const Credit = ({navigation}) => {
   const BASE_AMOUNT = 99; // You can easily change this later
-  const optionsCount = 8;  // How many options you want to show
+  const optionsCount = 6;  // How many options you want to show
   const amount = useSelector((state) => state?.user?.currentUser?.wallet);
   const dispatch = useDispatch();
+  const height = Dimensions.get('window').height
 const theme = useTheme();
   const { colors } = theme;
   const [selectedAmount, setSelectedAmount] = useState(null);
@@ -75,17 +76,22 @@ const handleAddRecharge = async() => {
               Recharge
             </Text>
              <TouchableOpacity
-                      onPress={() => navigation.navigate("Filter")}
-                      style={[GlobalStyleSheet.headerBtn, { borderColor: colors.text, justifyContent:"center", alignItems:"center", flexDirection:"row", width:80 }]}
-                    >
-                      <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.success }}>
-                                      {amount}
-                                    </Text>
-                       <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
-                    </TouchableOpacity>
+              onPress={() => navigation.navigate("Filter")}
+              style={[GlobalStyleSheet.headerBtn, { borderColor: colors.borderColor }]}
+            >
+              <Image
+                style={{
+                  height: 22,
+                  width: 22,
+                  tintColor: colors.title,
+                   display: 'none'
+                }}
+                source={IMAGES.filter}
+              />
+            </TouchableOpacity>
           </View>
-    <View style={[GlobalStyleSheet.container,{flex: 1, paddingHorizontal: 40,justifyContent: 'center', alignItems: 'center'}]}>
-      <View>
+    <View style={[GlobalStyleSheet.container, {flex: 1}]}>
+      <View style={{paddingHorizontal: 40,justifyContent: 'center', alignItems: 'center'}}>
       <FlatList
         data={rechargeOptions}
         keyExtractor={(item) => item.toString()}
@@ -100,8 +106,31 @@ const handleAddRecharge = async() => {
         )}
       />
       </View>
+      <View style={{flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 10, alignItems:'center', gap: 10,}}>
+                   <View style={[styles.inputStyle, { borderColor: theme.dark ? colors.title : "#141414", width: "66%" }]}>
+                                    <TextInput
+                                      style={{
+                                        ...FONTS.fontSemiBold,
+                                        fontSize: 18,
+                                        color: colors.title,
+                                        flex: 1,
+                                        top: 0,
+                                        paddingVertical: 0,
+                                        paddingLeft: 10,
+                                        //backgroundColor:'red'
+                                      }}
+                                      //autoFocus
+                                      // keyboardType="number-pad"
+                                      placeholder="Coupon Code"
+                                      placeholderTextColor={theme.dark ? colors.title : "#141414"}
+                                    />
+                                  </View>
+                                  <View style={{width: '30%'}}>
+                                    <ButtonLight title="Apply"/>
+                                  </View>
+      </View>
     </View>
-      <View style={{paddingVertical: 100, paddingHorizontal:20, gap: 40}}>
+      <View style={{paddingVertical: 100, paddingHorizontal:20, gap: 20}}>
       <ButtonLight
         onPress={() => navigation.navigate("History")}
         title={"Check History"}
@@ -118,5 +147,21 @@ const handleAddRecharge = async() => {
   );
 };
 
+const styles = StyleSheet.create({
+  inputStyle: {
+    height: 46,
+    padding: 5,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderBottomWidth: 3,
+    borderRadius: SIZES.radius,
+    // marginBottom: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#141414",
+    // backgroundColor:'green'
+    //backgroundColor:'rgba(255,255,255,.05)',
+  },
+});
 
 export default Credit;

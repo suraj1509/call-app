@@ -26,20 +26,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import Header from "../../../../app/layout/Header";
 import { GlobalStyleSheet } from "../../../../app/constants/StyleSheet";
 import { COLORS, FONTS, IMAGES, SIZES } from "../../../../app/constants/theme";
-import storage from "@react-native-firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
-import * as Actions from "../../../../redux/Actions";
-import LanguageSheet from "../components/LanguageSheet";
-import AboutSheet from "../components/AboutSheet";
-import ImageResizer from "react-native-image-resizer";
-import * as services from "../../../../services/user";
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import TimeSlotSheet from "../components/TimeSlotSheet";
-import TabButtonStyle1 from "../../../../app/components/Tabs/TabButtonStyle1";
-import TabButtonStyle2 from "../../../../app/components/Tabs/TabButtonStyle2";
-import ButtonLight from "../../../../app/components/Button/ButtonLight";
-import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
-import TabStyle1 from "../../../../app/components/Footers/FooterStyle1";
 import CheckList from "../components/CheckList";
 
 const EarningDetails = ({ navigation }) => {

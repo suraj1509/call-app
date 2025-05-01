@@ -18,6 +18,7 @@ import {
 import { CommonActions, useTheme } from "@react-navigation/native";
 import * as Progress from "react-native-progress";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import Octicons from "react-native-vector-icons/Octicons";
 import FeatherIcon from "react-native-vector-icons/Feather";
 // import DropShadow from "react-native-shadow-2";
 import { COLORS, FONTS, IMAGES } from "../../../../app/constants/theme";
@@ -190,15 +191,20 @@ const Profile = ({ navigation, route }) => {
           >
             Profile
           </Text>
-         <TouchableOpacity
-                               onPress={() => navigation.navigate("Filter")}
-                               style={[GlobalStyleSheet.headerBtn, { borderColor: colors.text, justifyContent:"center", alignItems:"center", flexDirection:"row", width:80 }]}
-                             >
-                               <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.success }}>
-                                               {amount}
-                                             </Text>
-                                <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
-                             </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Filter")}
+          style={[GlobalStyleSheet.headerBtn, { borderColor: colors.borderColor }]}
+        >
+          <Image
+            style={{
+              height: 22,
+              width: 22,
+              tintColor: colors.title,
+              display: 'none'
+            }}
+            source={IMAGES.filter}
+          />
+        </TouchableOpacity>
         </View>
         <ScrollView style={{ backgroundColor: colors.background }}>
           <View
@@ -217,8 +223,8 @@ const Profile = ({ navigation, route }) => {
                 marginBottom: 20,
               }}
             >
-              <TouchableOpacity  style={styles.actionBtn}>
-                <FontAwesome5 color={COLORS.primary} size={22} name={"cog"} />
+              <TouchableOpacity  style={styles.actionBtn} onPress={()=> navigation.navigate("Notifications")}>
+                <Octicons color={COLORS.primary} size={26} name={"bell"}/>
               </TouchableOpacity>
               <TouchableOpacity >
                 <View

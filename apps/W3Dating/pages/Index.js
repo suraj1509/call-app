@@ -35,6 +35,9 @@ import { useNavigation } from "@react-navigation/native";
 import Form from "./Form";
 import Earnings from "./Likes/Earnings";
 import EarningDetails from "./Likes/EarningDetails";
+import Review from "./Likes/Review";
+import Support from "./Likes/Support";
+import Notifications from "./Likes/Notifications";
 
 const StackComponent = createNativeStackNavigator();
 
@@ -111,10 +114,13 @@ const W3DatingPage = ({ initialLoading = false, skipInitialLaunch = false, isLog
         {/* <StackComponent.Screen name={"RecentPics"} component={RecentPics} />
         <StackComponent.Screen name={"Location"} component={Location} /> */}
         <StackComponent.Screen name={"SingleChat"} component={SingleChat} />
-        {/* <StackComponent.Screen name={"Filter"} component={Filter} />
-        <StackComponent.Screen name={"Notifications"} component={Notifications} /> */}
+         {/* <StackComponent.Screen name={"Filter"} component={Filter} /> */}
+        {/*<StackComponent.Screen name={"Notifications"} component={Notifications} /> */}
         {/* <StackComponent.Screen name={"Languages"} component={Languages} /> */}
         <StackComponent.Screen name={"EditProfile"} component={EditProfile} />
+        <StackComponent.Screen name={"Notifications"} component={Notifications} />
+        <StackComponent.Screen name={"Support"} component={Support} />
+        <StackComponent.Screen name={"Review"} component={Review} />
         <StackComponent.Screen name={"Earnings"} component={Earnings} />
         <StackComponent.Screen name={"EarningDetails"} component={EarningDetails} />
         {/* <StackComponent.Screen name={"Settings"} component={Settings} /> */}

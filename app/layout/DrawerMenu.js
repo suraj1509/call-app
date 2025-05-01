@@ -101,9 +101,14 @@ const DrawerMenu = () => {
             <Text style={[styles.navText, { color: colors.text }]}>Earnings Snapshot</Text>
             <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
           </TouchableOpacity>
-           <TouchableOpacity onPress={() => navigation.navigate("Ratings")} style={[styles.navLink, {gap: 12}]}>
+           <TouchableOpacity onPress={() => navigation.navigate("Review")} style={[styles.navLink, {gap: 12}]}>
             <Image source={IMAGES.unstar} style={{height: 24, width: 24, tintColor:"#bfc9da"}}/>
             <Text style={[styles.navText, { color: colors.text }]}>Review & Ratings</Text>
+            <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Support")} style={[styles.navLink, {gap: 12}]}>
+            <Image source={IMAGES.shield} style={{height: 24, width: 24, tintColor:"#bfc9da"}}/>
+            <Text style={[styles.navText, { color: colors.text }]}>Support & Safety</Text>
             <FeatherIcon size={16} color={colors.text} name={"chevron-right"} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("EditProfile")} style={[styles.navLink]}>

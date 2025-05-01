@@ -131,14 +131,19 @@ const theme = useTheme();
                   History
                 </Text>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("Filter")}
-                  style={[GlobalStyleSheet.headerBtn, { borderColor: colors.text, justifyContent:"center", alignItems:"center", flexDirection:"row", width:80 }]}
-                >
-                  <Text style={{ ...FONTS.fontBold, fontSize: 16, color: COLORS.success }}>
-                                  {currentUser.wallet}
-                                </Text>
-                    <MaterialIcons size={18} color={colors.title} style={{left:4}} name="attach-money"  />
-                </TouchableOpacity>
+                          onPress={() => navigation.navigate("Filter")}
+                          style={[GlobalStyleSheet.headerBtn, { borderColor: colors.borderColor }]}
+                        >
+                          <Image
+                            style={{
+                              height: 22,
+                              width: 22,
+                              tintColor: colors.title,
+                               display: 'none'
+                            }}
+                            source={IMAGES.filter}
+                          />
+                        </TouchableOpacity>
               </View>
     <View style={[GlobalStyleSheet.container,{flex: 1, padding: 40,justifyContent: 'center', alignItems: 'center'}]}>
       <FlatList
