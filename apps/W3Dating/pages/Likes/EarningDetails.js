@@ -28,6 +28,8 @@ import { GlobalStyleSheet } from "../../../../app/constants/StyleSheet";
 import { COLORS, FONTS, IMAGES, SIZES } from "../../../../app/constants/theme";
 import { useDispatch, useSelector } from "react-redux";
 import CheckList from "../components/CheckList";
+import ButtonLight from "../../../../app/components/Button/ButtonLight";
+import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
 
 const EarningDetails = ({ navigation }) => {
   const user = useSelector((state) => state?.user?.currentUser);
@@ -117,67 +119,6 @@ const EarningDetails = ({ navigation }) => {
                         );
                     })}
                       </View>
-                      {/* <View
-                        style={{
-                          padding: 16,
-                          flexDirection: "row",
-                          justifyContent: "space-around",
-                          // backgroundColor: "red",
-                        }}
-                      >
-                        <View style={{ width: "40%" }}>
-                          <TouchableOpacity
-                            // onPress={() => setDeleteModal(false)}
-                            activeOpacity={0.5}
-                            style={{
-                              width: "100%",
-                              borderRadius: 40,
-                              backgroundColor: theme?.dark ? "#F5F5F520" : "#F5F5F5",
-                              height: 45,
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <Text
-                              style={{
-                                ...FONTS.fontMedium,
-                                fontSize: 16,
-                                color: theme?.dark ? COLORS.white : "#141414",
-                              }}
-                            >
-                              Close
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                        <View style={{ width: "40%" }}>
-                          <TouchableOpacity
-                            // onPress={async () => {
-                            
-                            // }}
-                            activeOpacity={0.5}
-                            style={{
-                              width: "100%",
-                              borderRadius: 40,
-                              //backgroundColor:'#F5F5F5',
-                              borderWidth: 1,
-                              borderColor: COLORS.primary,
-                              height: 45,
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            {!true ? (
-                              <Text style={{ ...FONTS.fontSemiBold, fontSize: 16, color: COLORS.primary }}>
-                                Confirm
-                              </Text>
-                            ) : (
-                              <View style={GlobalStyleSheet.spinner}>
-                                <ActivityIndicator size="small" color={COLORS.primary} />
-                              </View>
-                            )}
-                          </TouchableOpacity>
-                        </View>
-                      </View> */}
                     </View>
                   </View>
                   </TouchableWithoutFeedback>
@@ -191,7 +132,7 @@ const EarningDetails = ({ navigation }) => {
               checked={false}
             /> 
             <View>
-              {Array.from({ length: 5 }).map((_, index) =>(<View
+              {Array.from({ length: 10 }).map((_, index) =>(<View
               key={index}
                 style={{
                   flexDirection: "row",
@@ -252,6 +193,19 @@ const EarningDetails = ({ navigation }) => {
             </View>
           </View>
              </ScrollView>
+             <View style={{paddingVertical: 20, paddingHorizontal:20, gap: 40}}>
+      <ButtonLight
+        onPress={() => navigation.navigate("EarningDetails")}
+        title={"Total:  Rs 300"}
+        btnRounded
+        color={COLORS.textLight}
+      />
+      <ButtonOutline
+        // onPress={handleAddRecharge}
+        title={"Proceed to Widthdraw"}
+        btnRounded
+      />
+      </View>
       </SafeAreaView>
     </>
   );

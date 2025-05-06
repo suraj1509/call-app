@@ -23,21 +23,8 @@ const ProfileDetails = ({ route }) => {
   const [activeColor, setActiveColor] = React.useState(COLORS.success);
   const [lastActiveTime, setLastActiveTime] = React.useState("");
   const [activeProfileDetails, setActiveProfileDetails] = React.useState(item);
-  const [viewedProfiles, setViewedProfiles] = React.useState(new Set());
-  const saveUsers = currentUser?.savedUsers?.some(({ id }) =>
-    [activeProfileDetails?._id, activeProfileDetails?.id]?.includes(id),
-  )
-    ? IMAGES.star
-    : IMAGES.unstar;
 
   const navigation = useNavigation();
-
-  useEffect(() => {
-    dispatch(
-      Actions?.updateFeedUserInfo({ type: "visit", userId: activeProfileDetails._id || activeProfileDetails.id }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const calculateTimeAgo = (createdAt) => {
     if (!createdAt) {
@@ -126,14 +113,13 @@ const ProfileDetails = ({ route }) => {
       });
 
       if (existingChannel) {
-        console.log('Channel already exists:', existingChannel.channelId);
         return `channel${existingChannel.channelId}`;
       }
 
       const newChannelRef = channelRef.push();
       const newChannelId = newChannelRef.key;
-      database().ref(`records/${activeProfileDetails?.id}`).push(`channel${newChannelId}`);
-      database().ref(`records/${currentUser?.id}`).push(`channel${newChannelId}`);;
+      // database().ref(`records/${activeProfileDetails?.id}`).push(`channel${newChannelId}`);
+      // database().ref(`records/${currentUser?.id}`).push(`channel${newChannelId}`);;
 
       const initialCallDetails = {
         createdAt: Date.now(),
@@ -394,7 +380,7 @@ const ProfileDetails = ({ route }) => {
                 try {
                   const maxDuration = getValidSeconds(currentUser?.walletAmount, activeProfileDetails?.rate);
                   const channelName = await getOrCreateChannel(currentUser?.id, activeProfileDetails?.id)
-                  const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "video", callerUid: currentUser?.id, callerName: currentUser?.name });
+                  const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "video", id: currentUser?.id, callerName: currentUser?.name, img: currentUser?.profilePhotos[0] });
                   navigation.navigate("SocialConnect", { mode: "video", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet })
                 } catch (error) {
                   console.log(error, "error token")
@@ -452,10 +438,9 @@ const ProfileDetails = ({ route }) => {
               onPress={async () => {
                 try {
                   const maxDuration = getValidSeconds(currentUser?.wallet, activeProfileDetails?.rate);
-                  console.log(maxDuration, "maxDuration")
                   const channelName = await getOrCreateChannel(currentUser?.id, activeProfileDetails?.id)
-                  const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "voice", callerUid: currentUser?.id, callerName: currentUser?.name });
-                  navigation.navigate("SocialConnect", { mode: "voice", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, callerName: currentUser?.name, callerId: currentUser?.id, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet })
+                  const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "voice", id: currentUser?.id, callerName: currentUser?.name, img: currentUser?.profilePhotos[0] });
+                  navigation.navigate("SocialConnect", { mode: "voice", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, callerName: currentUser?.name, callerId: currentUser?.id, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet, activeProfileDetails })
                 } catch (error) {
                   console.log(error, "error token")
                 }

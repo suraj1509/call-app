@@ -10,102 +10,53 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import database from '@react-native-firebase/database';
 import { useSelector } from 'react-redux';
 
-const History = () => {
+const History = ({navigation}) => {
   const currentUser = useSelector((state) => state?.user?.currentUser);
-  const [history, setHistory] = React.useState([]);
+  const [history, setHistory] = React.useState(currentUser?.history);
+  const theme = useTheme();
+  const { colors } = theme;
 
-  async function getMergedUserHistory(userId) {
-    try {
-      // Step 1: Fetch all channels linked to the userId
-      const userRecordsSnapshot = await database().ref(`records/${userId}`).once('value');
-      const userRecords = userRecordsSnapshot.val() || {};
-  
-      const channelNames = Object.values(userRecords);
-      const mergedHistory = [];
-  
-      // Step 2: Loop through channels and collect all histories
-      for (const channelName of channelNames) {
-        if (!channelName) continue;
-  
-        const historySnapshot = await database().ref(`history/${channelName}`).once('value');
-        const historyData = historySnapshot.val();
-  
-        if (historyData) {
-          const historyArray = Array.isArray(historyData) 
-            ? historyData 
-            : Object.values(historyData);
-  
-          mergedHistory.push(...historyArray); // Add all entries to merged array
-        }
-      }
-  
-      // Step 3: Return a single merged array
-      return mergedHistory;
-    } catch (error) {
-      console.error('Error fetching merged user history:', error);
-      throw error;
-    }
+  function formatDateTime12h(timestamp) {
+    const date = new Date(timestamp);
+    let hours = date.getHours();
+    const minutes = `${date.getMinutes()}`.padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12; // convert 0 to 12
+    return `${date.toLocaleDateString()} ${hours}:${minutes} ${ampm}`;
   }
-  
-  
-  
-  React.useEffect(()=>{
-    getMergedUserHistory(currentUser?.id).then((data) => {
-      setHistory(data)
-    }).catch((error) => {
-      console.error('Error:', error);
-    } );
-  })
-  // Sample call history with names
-  const callHistory = [
-    { id: '1', name: 'John Doe', type: 'Audio', duration: 125, cost: 10, direction: 'Outgoing' },
-    { id: '2', name: 'Jane Smith', type: 'Video', duration: 300, cost: 25, direction: 'Incoming' },
-    { id: '3', name: 'Mike Johnson', type: 'Audio', duration: 45, cost: 5, direction: 'Missed' },
-    { id: '4', name: 'Emily Brown', type: 'Video', duration: 180, cost: 15, direction: 'Outgoing' },
-  ];
+    
 
-  // Convert seconds to MM:SS
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}m ${secs}s`;
   };
 
-  // Function to show a symbol for incoming/outgoing/missed
-  const renderDirectionIcon = (callerName, status) => {
-    let direction 
-    if(status === "connecting"){
-      direction = '❌'
-    }else if(callerName === currentUser?.name){
-      direction = '➡️'
-    }else{
-      direction = '⬅️'
-    }
-   return direction;
-  };  
-
   const renderCallItem = ({ item }) => (
     <View style={styles.callItem}>
       <View style={{ flex: 1 }}>
-        {/* Call Name with Direction Icon */}
-        <Text style={styles.callName}>
-         {item?.callerName}
+        <View style={{flexDirection: 'row',alignItems: 'center', gap: 10}}>
+        <Text style={{...FONTS.h6, color: COLORS.text}}>
+         {item?.name} 
         </Text>
-
+         <Text style={{color: COLORS.textLight}}>
+      {item.type}{"    "} {formatDateTime12h(item?.time)}
+        </Text>
+        {/* <Text style={styles.callName}>
+          {renderDirectionIcon(item?.type)}
+        </Text> */}
+        </View>
         {/* Type and Duration */}
         <Text style={styles.callDetails}>
-          {item.type} Call · {formatDuration(item?.duration)}
+          duration: {formatDuration(item?.duration)} 
         </Text>
       </View>
 
-      <Text style={styles.callName}>
-          {renderDirectionIcon(item?.callerName, item?.status)}
-        </Text>
+      
       <Text style={styles.callCost}>₹{item.cost}</Text>
     </View>
   );
-const theme = useTheme();
-  const { colors } = theme;
+
   return (
        <SafeAreaView
                 style={{
@@ -145,12 +96,12 @@ const theme = useTheme();
                           />
                         </TouchableOpacity>
               </View>
-    <View style={[GlobalStyleSheet.container,{flex: 1, padding: 40,justifyContent: 'center', alignItems: 'center'}]}>
+    <View style={[GlobalStyleSheet.container,{flex: 1, paddingHorizontal: 20,justifyContent: 'center', flexDirection: 'row'}]}>
       <FlatList
         data={history}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderCallItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20}}
       />
     </View>
     </SafeAreaView>
@@ -187,7 +138,8 @@ const styles = StyleSheet.create({
   callName: {
     fontSize: 18,
     fontWeight: '600',
-    color:"black"
+    color:"black",
+    paddingHorizontal: 10,
   },
   callDetails: {
     fontSize: 14,

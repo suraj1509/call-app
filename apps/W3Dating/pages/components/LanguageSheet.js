@@ -71,14 +71,14 @@ const LanguageSheet = ({ sheetRef }) => {
       dispatch(
         Actions?.updateCurrentUser({
           languagesSpoken: languages,
-          profileStatusToAdd: ["languages"],
+          // profileStatusToAdd: ["languages"],
         }),
       );
     } else {
       dispatch(
         Actions?.updateCurrentUser({
           languagesSpoken: languages,
-          profileStatusToRemove: ["languages"],
+          // profileStatusToRemove: ["languages"],
         }),
       );
     }

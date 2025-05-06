@@ -2,7 +2,9 @@ import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   BackHandler,
+  Dimensions,
   Image,
+  Modal,
   PermissionsAndroid,
   Platform,
   SafeAreaView,
@@ -11,6 +13,7 @@ import {
   Text,
   ToastAndroid,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -31,12 +34,12 @@ import ImageResizer from "react-native-image-resizer";
 import * as services from "../../../../services/user";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import TimeSlotSheet from "../components/TimeSlotSheet";
-import ToggleStyle1 from "../../../../app/components/Toggles/ToggleStyle1";
-import ToggleStyle2 from "../../../../app/components/Toggles/ToggleStyle2";
 import ToggleStyle3 from "../../../../app/components/Toggles/ToggleStyle3";
-import ToggleStyle4 from "../../../../app/components/Toggles/ToggleStyle4";
-import ToggleStyle5 from "../../../../app/components/Toggles/ToggleStyle5";
 import ToggleStyleRevert from "../../../../app/components/Toggles/ToggleStyleRevert";
+import CheckList from "../components/CheckList";
+import { indianStates } from "../../Utilities/States";
+import ButtonLight from "../../../../app/components/Button/ButtonLight";
+import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
 
 const EditProfile = ({ navigation }) => {
   const user = useSelector((state) => state?.user?.currentUser);
@@ -63,6 +66,9 @@ const EditProfile = ({ navigation }) => {
   const [image5, setImage5] = React.useState("");
   const [upload, setUpload] = React.useState(false);
   const [rate, setRate] = useState([user?.rate] || [5]);
+  const [modal, setModal] = React.useState(false)
+  const height = Dimensions.get('window').height
+  const [state, setState] = React.useState(user?.state)
 
   React.useEffect(() => {
     if (user?.profilePhotos) {
@@ -320,6 +326,66 @@ const EditProfile = ({ navigation }) => {
 
         <ScrollView>
           <View style={GlobalStyleSheet.container}>
+          <Modal visible={modal} transparent onLayout={() => setModal(false)}>
+            <TouchableWithoutFeedback onPress={() => setModal(false)}>
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: "rgba(0,0,0,0.5)",
+                      justifyContent: "center",
+                      alignContent: "center",
+                     
+                    }}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: colors.cardBg,
+                        borderWidth: 1,
+                        borderColor: colors.border,
+                        margin: 20,
+                        borderRadius: 10,
+                        padding: 16,
+                        gap: 10,
+                        height: height *  0.7 ,
+                        overflow: "hidden",
+                        // backgroundColor: "blue",
+                      }}
+                    >
+                      <View style={{ padding: 16 }}>
+                        <Text
+                          style={{
+                            ...FONTS.h5,
+                            // flex: 1,
+                            textAlign: "center",
+                            color: colors.title,
+                          }}
+                        >
+                          Please select your state
+                        </Text>
+                      </View>
+                     
+                      <View >
+                        <ScrollView >
+                      {indianStates?.map((data, index) => {
+                      return (
+                        <CheckList
+                          onPress={() => {
+                            setState(data)
+                            setModal(false)
+                            dispatch(Actions?.updateCurrentUser({state: data}))
+                        }}
+                          item={data}
+                          checked={state === data ? true : false}
+                          key={index}
+                        />
+                      );
+                    })}
+                    </ScrollView>
+                      </View>
+                    </View>
+                  </View>
+                  </TouchableWithoutFeedback>
+                </Modal>
             <View
               style={{
                 flexDirection: "row",
@@ -683,7 +749,7 @@ const EditProfile = ({ navigation }) => {
                   marginHorizontal: -15,
                 }}
                 titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
-                title={user?.interests?.map((interest) => interest?.title).join(", ") || "Add Languages"}
+                title={user?.languagesSpoken?.map((languagesSpoken) => languagesSpoken).join(", ") || "Add Languages"}
               />
             </View>  
             <View
@@ -718,7 +784,7 @@ const EditProfile = ({ navigation }) => {
                   marginHorizontal: -15,
                 }}
                 titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
-                title={user?.interests?.map((interest) => interest?.title).join(", ") || "Select slots"}
+                title={user?.timeSlots?.map((timeSlots) => timeSlots).join(", ") || "Select slots"}
               />
             </View>
             {/* <View
@@ -757,6 +823,18 @@ const EditProfile = ({ navigation }) => {
                 title={genderData[lookingFor] || "Long-term partner"}
               />
             </View> */}
+            <View>
+          
+          <CheckList
+            onPress={() => {
+                setModal(true)}}
+            item={state ? [state] : ["Select state"]}
+            dropdown={true}
+            checked={false}
+       
+          />
+    
+    </View>
             <View
               style={[
                 GlobalStyleSheet.card,
@@ -847,7 +925,7 @@ const EditProfile = ({ navigation }) => {
               >
                 Vacation Mode
               </Text>
-              <ToggleStyle3/>
+              <ToggleStyle3 mode="vacation"/>
               {/* <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => {
@@ -889,7 +967,7 @@ const EditProfile = ({ navigation }) => {
               >
                 Turn Off Notifications
               </Text>
-              <ToggleStyleRevert />
+              <ToggleStyleRevert mode="notification"/>
               {/* <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => {
@@ -945,6 +1023,7 @@ const EditProfile = ({ navigation }) => {
                 />
               </TouchableOpacity>
             </View>
+            <ButtonOutline title="Request Admin Approval" btnRounded onPress={()=>ToastAndroid.show("Requested for admin approval", ToastAndroid.SHORT)}/>
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -3,18 +3,21 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
+import { useSelector } from 'react-redux';
 
 const SocialConnectResponse = ({ route }) => {
   const navigation = useNavigation();
   const [callerName, setCallerName] = React.useState("Unknown");
-  const { mode, channelName, localUid, token, id  } = route.params.data;
+  const currentUser = useSelector(state => state?.user?.currentUser);
+  const { mode, channelName, localUid, token, id, img, userId  } = route.params.data;
   database()
   .ref(`connect/${id}`)
   .once('value')
   .then(snapshot => {
     if (!snapshot.exists()) {
       // If it does NOT exist, navigate
-      navigation.navigate('DrawerNavigation');
+      // navigation.navigate('DrawerNavigation');
+      return;
     }else{
       setCallerName(snapshot.val().callerName);
     }
@@ -26,7 +29,13 @@ const SocialConnectResponse = ({ route }) => {
 
 
 const onAccept = () => {
-navigation.navigate("SocialConnect", { mode, channelName, localUid, token  });  
+  console.log("Accepting call...",id);
+  const callerProfileDetails = {
+    name: currentUser?.name,
+    id: userId,
+    img : currentUser?.profilePhotos?.[0],
+  }
+navigation.navigate("SocialConnect", { mode, channelName, localUid, token, callerName, id, callerProfileDetails  });  
 }
 
 const handleConnectRejection = async() => {
@@ -50,7 +59,7 @@ navigation.navigate("DrawerNavigation");
     if (!id) return; 
     const onValueChange = userConnectRef.on('value', snapshot => {
       if (!snapshot.exists()) {
-        navigation.goBack();
+        navigation.navigate("DrawerNavigation");
       }
     });
     return () => {

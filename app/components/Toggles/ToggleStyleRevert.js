@@ -4,14 +4,18 @@ import { useTheme } from '@react-navigation/native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
+import * as Actions from '../../../redux/Actions'
+import { useDispatch, useSelector } from 'react-redux';
 
 const ToggleStyleRevert = (props) => {
     
     const {colors} = useTheme();
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state) => state?.user?.currentUser)
 
-    const [active , setActive] = useState(false);
+    const [active , setActive] = useState(currentUser?.notificationMode);
 
-    const offset = useSharedValue(0);
+    const offset = useSharedValue(currentUser?.notificationMode ? 28 : 0);
     const toggleStyle = useAnimatedStyle(() => { 
         return {
             transform: [
@@ -26,11 +30,14 @@ const ToggleStyleRevert = (props) => {
         <>
             <TouchableOpacity
                 onPress={() => { 
+                    let mode = active
                     setActive(!active);
-                    if(active){
+                    if(mode){
                         offset.value = withSpring(0)
+                        dispatch(Actions?.updateCurrentUser({notificationMode: false}))
                     }else{
                         offset.value = withSpring(28)
+                        dispatch(Actions?.updateCurrentUser({notificationMode: true}))
                     }
                 }}
                 style={[{

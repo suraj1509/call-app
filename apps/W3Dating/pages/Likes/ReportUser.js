@@ -43,7 +43,7 @@ import TabStyle1 from "../../../../app/components/Footers/FooterStyle1";
 import CheckList from "../components/CheckList";
 import Buttons from "../../../../app/Screens/Components/Buttons";
 
-const Support = ({ navigation }) => {
+const ReportUser = ({ navigation }) => {
     const user = useSelector((state) => state?.user?.currentUser);
     const { colors } = useTheme();
 
@@ -176,12 +176,12 @@ const Support = ({ navigation }) => {
                                                 })}
                                             </View> */}
                                         </View>
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: 70}}>
-                                        <TouchableOpacity onPress={() => navigation.navigate("BlockedUsers")}>
-                                            <Text style={{ color: COLORS?.primary, padding: 6 }}>View</Text>
+                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: 66}}>
+                                        <TouchableOpacity>
+                                            <Text style={{ color: COLORS?.primary }}>View</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => navigation.navigate("BlockUser")}>
-                                            <Text style={{ color: COLORS?.primary, padding: 6 }}>Add</Text>
+                                        <TouchableOpacity>
+                                            <Text style={{ color: COLORS?.primary }}>Add</Text>
                                         </TouchableOpacity>
                                         </View>
                                     </View>
@@ -406,4 +406,4 @@ const Support = ({ navigation }) => {
     );
 };
 
-export default Support;
+export default ReportUser;

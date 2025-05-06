@@ -38,6 +38,10 @@ import EarningDetails from "./Likes/EarningDetails";
 import Review from "./Likes/Review";
 import Support from "./Likes/Support";
 import Notifications from "./Likes/Notifications";
+import Rating from "./Likes/Rating";
+import BlockUser from "./Likes/BlockUser";
+import BlockedUsers from "./Likes/BlockedUsers";
+import ReportUser from "./Likes/ReportUser";
 
 const StackComponent = createNativeStackNavigator();
 
@@ -59,7 +63,7 @@ const W3DatingPage = ({ initialLoading = false, skipInitialLaunch = false, isLog
     if (!user?.id) return; 
     const onValueChange = userConnectRef.on('value', snapshot => {
       if (snapshot.exists()) {
-        navigation.navigate('SocialConnectResponse',{data: {...snapshot.val(), id: user?.id}});
+        navigation.navigate('SocialConnectResponse',{data: {...snapshot.val(), id: user?.id, userId: snapshot?.val()?.id}});
       }
     });
     return () => {
@@ -118,9 +122,13 @@ const W3DatingPage = ({ initialLoading = false, skipInitialLaunch = false, isLog
         {/*<StackComponent.Screen name={"Notifications"} component={Notifications} /> */}
         {/* <StackComponent.Screen name={"Languages"} component={Languages} /> */}
         <StackComponent.Screen name={"EditProfile"} component={EditProfile} />
+        <StackComponent.Screen name={"BlockUser"} component={BlockUser} />
+        <StackComponent.Screen name={"BlockedUsers"} component={BlockedUsers} />
+        <StackComponent.Screen name={"ReportUser"} component={ReportUser} />
         <StackComponent.Screen name={"Notifications"} component={Notifications} />
         <StackComponent.Screen name={"Support"} component={Support} />
         <StackComponent.Screen name={"Review"} component={Review} />
+        <StackComponent.Screen name={"Rating"} component={Rating} />
         <StackComponent.Screen name={"Earnings"} component={Earnings} />
         <StackComponent.Screen name={"EarningDetails"} component={EarningDetails} />
         {/* <StackComponent.Screen name={"Settings"} component={Settings} /> */}

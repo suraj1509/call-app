@@ -136,7 +136,8 @@ const Earnings = ({ navigation }) => {
               </Text>
               <Text style={{color:COLORS.textLight}}>400 mins</Text>
             </View>
-            <View style={{paddingVertical: 100, paddingHorizontal:20, gap: 40}}>
+        </ScrollView>
+            <View style={{paddingVertical: 20, paddingHorizontal:20, gap: 40}}>
       <ButtonLight
         onPress={() => navigation.navigate("EarningDetails")}
         title={"Earnings Details"}
@@ -149,7 +150,6 @@ const Earnings = ({ navigation }) => {
         btnRounded
       />
       </View>
-        </ScrollView>
       </SafeAreaView>
     </>
   );

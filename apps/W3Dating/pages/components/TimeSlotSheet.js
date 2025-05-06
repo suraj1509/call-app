@@ -60,14 +60,14 @@ const TimeSlotSheet = ({ sheetRef }) => {
       dispatch(
         Actions?.updateCurrentUser({
           timeSlots: timeSlots,
-          profileStatusToAdd: ["time-slot"],
+          // profileStatusToAdd: ["time-slot"],
         }),
       );
     } else {
       dispatch(
         Actions?.updateCurrentUser({
             timeSlots: timeSlots,
-            profileStatusToRemove: ["time-slot"],
+            // profileStatusToRemove: ["time-slot"],
         }),
       );
     }

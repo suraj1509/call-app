@@ -22,15 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 const Review = ({ navigation }) => {
   const user = useSelector((state) => state?.user?.currentUser);
   const { colors } = useTheme();
-  const [reviews, setReviews] = React.useState(
-    [
-      {img: user?.profilePhotos[0], name: "Aman", rating: 3, msg: "you are so polite to the customer" },
-      {img: user?.profilePhotos[0], name: "Sahil", rating: 1, msg: "you are so polite to the customer" },
-      {img: user?.profilePhotos[0], name: "Sanam", rating: 4, msg: "you are so polite to the customer" },
-      {img: user?.profilePhotos[0], name: "Rahul", rating: 5, msg: "you are so polite to the customer" },
-      {img: user?.profilePhotos[0], name: "Rahul", rating: 2, msg: "you are so polite to the customer" },
-    ]
-  )
+  const [reviews, setReviews] = React.useState(user?.reviews)
 
   return (
     <>
@@ -66,7 +58,7 @@ const Review = ({ navigation }) => {
                     borderWidth: 1,
                     borderColor: COLORS.borderColor,
                     paddingHorizontal: 16,
-                    paddingVertical: 10,
+                    paddingVertical: 20,
                     borderRadius: 10,
   
                     // Shadow for iOS
@@ -74,8 +66,8 @@ const Review = ({ navigation }) => {
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.1,
                     shadowRadius: 4,
-                    gap: 30,
-                    flexDirection: 'row',
+                    gap: 10,
+                    // flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
   
@@ -107,26 +99,26 @@ const Review = ({ navigation }) => {
                   >
                     {itm?.name}
                   </Text>
-                  </View>
                     <View
                                 style={{
                                   flexDirection: "row",
                                   flexWrap: "wrap",
                                   // marginBottom: 8,
-                                  gap: 60,
+                                  gap: 30,
                                   alignItems: 'center',
                                 }}
-                              >
+                                >
+                                  </View>
                                 {/* <Text style={{ ...FONTS.h6, fontSize: 15, color: colors.title, marginBottom: 4 }}>Rating</Text> */}
                                 <View style={{ flexDirection: 'row' }}>
                                   {Array.from({ length: 5 }).map((_, index) => {
                                     const starValue = index + 1;
                                     return (
-                         
+                                      
                                       <TouchableOpacity
-                                        key={index}
-                                        onPress={() => handlePress(starValue)}
-                                        activeOpacity={0.7}
+                                      key={index}
+                                      onPress={() => handlePress(starValue)}
+                                      activeOpacity={0.7}
                                       >
                                         <Text style={[{
                                           fontSize: 24,
@@ -140,13 +132,14 @@ const Review = ({ navigation }) => {
                                         </Text>
                                       </TouchableOpacity>
                                   
-                                    );
-                                  })}
+                                );
+                              })}
                                 </View>
                         <TouchableOpacity onPress={()=>setReviews(reviews.filter((_, i) => i !== index))} style={{padding: 8}}>
                           <Text style={{color: COLORS?.primary}}>Hide</Text>
                         </TouchableOpacity>
                               </View>
+                  <View style={{ width: '100%'}}><Text style={{color: COLORS.placeholderColor}}>{itm?.comment}</Text></View>
                 </View>
               </View>))}
             </View>

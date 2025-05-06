@@ -33,7 +33,7 @@ const handleAddRecharge = async() => {
     description: 'Credits towards consultation',
     image: 'https://i.imgur.com/3g7nmJC.jpg',
     currency: 'INR',
-    key: '<YOUR_KEY_ID>',
+    key: 'rzp_test_DolnzoEJ5bnnkq',
     amount: '5000',
     name: 'Acme Corp',
     order_id: 'order_DslnoIgkIDL8Zt',
