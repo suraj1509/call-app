@@ -47,6 +47,31 @@ const BlockedUsers = ({ navigation }) => {
     const user = useSelector((state) => state?.user?.currentUser);
     const { colors } = useTheme();
 
+    const dispatch = useDispatch();
+
+    const handleUnBlockPress = async (userId) => {
+        try {
+            const updatedBlockedUsers = await (user?.blockedUsers || [])
+            .map(u => {
+              if (typeof u === 'string') return u;
+              if (u && typeof u === 'object') return u._id?.toString() || u.id?.toString();
+              return null;
+            })
+            .filter(id => id && id !== userId.toString());
+        
+          // Dispatch update
+          await dispatch(Actions.updateCurrentUser({ blockedUsers: updatedBlockedUsers }));
+          dispatch(Actions.fetchCurrentUser());
+      
+          ToastAndroid.show("User Unblocked", ToastAndroid.SHORT);
+          navigation.goBack();
+        } catch (error) {
+          console.error("Unblock error:", error);
+        }
+      };
+      
+      
+
     return (
         <>
             <SafeAreaView
@@ -69,7 +94,7 @@ const BlockedUsers = ({ navigation }) => {
                                 <Text style={{ ...FONTS.h6, flex: 1 }}>Blocked User List</Text>
                                 {user?.blockedUsers?.map((itm, index) => {
                                     return(<View
-                                    //   key={index}
+                                      key={index}
                                     style={{
                                         flexDirection: "row",
                                         flexWrap: "wrap",
@@ -105,7 +130,7 @@ const BlockedUsers = ({ navigation }) => {
                                     >
                                         <View style={{flexDirection: 'row'}}>
                                         <Image
-                                            source={IMAGES.userPic4}
+                                            source={itm?.profilePhotos?.[0] ? {uri: itm?.profilePhotos?.[0]} : IMAGES.userPic4}
                                             // height={40}
                                             // width={40}
                                             style={{ borderRadius: 20,  height: 40, width: 40 }}
@@ -124,7 +149,7 @@ const BlockedUsers = ({ navigation }) => {
                                                 borderBottomColor: colors.borderColor,
                                             }}
                                         >
-                                         Karan
+                                        {itm?.name}
                                         </Text>
                                         <View
                                             style={{
@@ -164,7 +189,7 @@ const BlockedUsers = ({ navigation }) => {
                                         </View>
                                     
                                 <View>
-                                    <ButtonLight title="Unblock" height={40} paddingVertical={2}/>
+                                    <ButtonLight title="Unblock" height={40} paddingVertical={2} onPress={()=>handleUnBlockPress(itm?.id)}/>
                                 </View>
                                     </View>
                                 </View>)})}

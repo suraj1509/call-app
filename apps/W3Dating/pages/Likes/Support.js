@@ -390,7 +390,7 @@ const Support = ({ navigation }) => {
                                         }}
                                     > */}
                                         <View style={{width: "100%"}}>
-                                       <ButtonOutline title="Report" btnRounded/>
+                                       <ButtonOutline title="Report" btnRounded onPress={()=>navigation.navigate("ReportUser")}/>
                                         </View>
                                         {/* <TouchableOpacity>
                                             <Text style={{ color: COLORS?.textLight }}>Hide</Text>

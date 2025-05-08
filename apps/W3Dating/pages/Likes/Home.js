@@ -47,6 +47,39 @@ const Home = ({ navigation }) => {
     }
   },[feedUsers])
 
+
+  const timeAgo = (timestamp) => {
+    const now = Date.now();
+    const diffMs = now - new Date(timestamp).getTime();
+  
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+    if (minutes < 2) return 'Online';
+    if (minutes < 60) return `${minutes} minutes ago`;
+    if (hours < 24) return `${hours} hours ago`;
+    if (days < 30) return `${days} days ago`;
+  
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months} months ago`;
+  
+    const years = Math.floor(months / 12);
+    return `${years} years ago`;
+  };
+
+  const getActiveColor = (timestamp) => {
+    const now = Date.now();
+    const diffMs = now - new Date(timestamp).getTime();
+    const minutes = diffMs / (1000 * 60);
+  
+    if (minutes < 1) return COLORS.success;   // Online
+    if (minutes < 5) return COLORS.warning;  // Recently active
+    return COLORS.red;                      // Away/Inactive
+  };
+
+  
   return (
     <>
       <SafeAreaView
@@ -227,11 +260,11 @@ const Home = ({ navigation }) => {
                         source={data?.profilePhotos[0] ? {uri: data?.profilePhotos[0]} : IMAGES?.avtar2}
                       />
                       <View style={{ position: 'absolute', left: 2, top: 2, flexDirection: 'row', justifyContent: 'space-between', width: '96%'}}>
-                        <View style={{backgroundColor: `${COLORS.dark}80`, width: 60, flexDirection:'row', justifyContent:'space-around', alignItems:'center',borderRadius: 10, padding: 2}}>
+                        <View style={{backgroundColor: `${COLORS.dark}80`, width: '50%', flexDirection:'row', gap: 6, alignItems:'center',borderRadius: 10, padding: 2}}>
                           <View>
-                          <View style={{height: 8, width: 8, borderRadius: 8, backgroundColor: COLORS.success}}/>
+                          <View style={{height: 8, width: 8, borderRadius: 8, backgroundColor: data?.lastActive && getActiveColor(data?.lastActive)}}/>
                           </View>
-                          <Text style={{color: COLORS.light, fontSize: 12}}>Online</Text>
+                          <Text style={{color: COLORS.light, fontSize: 12}}>{data?.lastActive && timeAgo(data?.lastActive)}</Text>
                         </View>
                         <View>
                         <TouchableOpacity>

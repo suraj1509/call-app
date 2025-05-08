@@ -43,27 +43,87 @@ import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
 import TabStyle1 from "../../../../app/components/Footers/FooterStyle1";
 import CheckList from "../components/CheckList";
 import Buttons from "../../../../app/Screens/Components/Buttons";
+import debounce from "lodash.debounce";
+import { getSearchUsers } from "../../../../services/user";
 
 const BlockUser = ({ navigation }) => {
     const user = useSelector((state) => state?.user?.currentUser);
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [blockedUsers, setBlockedUsers] = useState(false);
     const { colors } = useTheme();
+    const dispatch = useDispatch();
 
       const debouncedFetchUsers = React.useCallback(
         debounce(async (query) => {
           if (query.length !== 0) {
             try {
               const res = await getSearchUsers(query.toLowerCase());
+              setBlockedUsers(false)
               setFilteredUsers(res);
             } catch (error) {
               console.error(error);
             }
           } else {
-            setFilteredUsers(feedUsers);
+            setBlockedUsers(true)
+            setFilteredUsers(user?.blockedUsers);
           }
         }, 400),
         [],
       );
       
+
+      const handleBlockPress = async (userId) => {
+        try {
+          // Normalize existing blocked user IDs
+          const currentBlockedUserIds = (user?.blockedUsers || []).map((u) => {
+            if (typeof u === 'string') return u;
+            if (u && typeof u === 'object' && u._id) return u._id.toString();
+            return null;
+          }).filter(Boolean);
+      
+          // Add new ID if not already there
+          if (!currentBlockedUserIds.includes(userId)) {
+            currentBlockedUserIds.push(userId.toString());
+          }
+      
+          
+          // Trigger update without waiting for result
+          await dispatch(Actions.updateCurrentUser({ blockedUsers: currentBlockedUserIds }));
+          await dispatch(
+            Actions.fetchCurrentUser()
+          );
+          
+          // Optimistically show UI changes before await
+          ToastAndroid.show("User Blocked", ToastAndroid.SHORT);
+          navigation.goBack();
+
+        } catch (error) {
+          console.error('Block error:', error);
+        }
+      };
+      
+      
+      
+           
+    
+    const handleUnBlockPress = async (userId) => {
+        try {
+          const updatedBlockedUsers = await user?.blockedUsers?.filter(_id => _id === userId);
+      
+          await dispatch(
+            Actions.updateCurrentUser({ blockedUsers: updatedBlockedUsers })
+          );
+          await dispatch(
+            Actions.fetchCurrentUser()
+          );
+            ToastAndroid.show("User Unblocked", ToastAndroid.SHORT);
+            navigation.goBack();
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      
+
     return (
         <>
             <SafeAreaView
@@ -102,7 +162,7 @@ const BlockUser = ({ navigation }) => {
                                         }}
                                         placeholder="Search..."
                                         placeholderTextColor={colors.textLight}
-                                        // onChangeText={(text) => debouncedFetchUsers(text)}
+                                        onChangeText={(text) => debouncedFetchUsers(text)}
                                       />
                                       <FeatherIcon
                                         style={{
@@ -119,9 +179,9 @@ const BlockUser = ({ navigation }) => {
                             <View style={{ paddingVertical: 24, paddingHorizontal: 10 }}>
                                 <Text style={{ ...FONTS.h6, flex: 1 }}>Blocked User List</Text>
                                 <ScrollView>
-                                {user?.blockedUsers?.map((itm, index) => {
+                                {filteredUsers?.map((itm, index) => {
                                     return(<View
-                                    //   key={index}
+                                      key={index}
                                     style={{
                                         flexDirection: "row",
                                         flexWrap: "wrap",
@@ -157,7 +217,7 @@ const BlockUser = ({ navigation }) => {
                                     >
                                         <View style={{flexDirection: 'row'}}>
                                         <Image
-                                            source={IMAGES.userPic4}
+                                            source={itm?.profilePhotos?.[0] ? {uri: itm?.profilePhotos?.[0]} : IMAGES.userPic4}
                                             // height={40}
                                             // width={40}
                                             style={{ borderRadius: 20,  height: 40, width: 40 }}
@@ -176,7 +236,7 @@ const BlockUser = ({ navigation }) => {
                                                 borderBottomColor: colors.borderColor,
                                             }}
                                         >
-                                         Karan
+                                        {itm?.name}
                                         </Text>
                                         <View
                                             style={{
@@ -215,8 +275,9 @@ const BlockUser = ({ navigation }) => {
                                             </View> */}
                                         </View>
                                     
-                                <View>
-                                    <ButtonLight title="Unblock" height={40} paddingVertical={2}/>
+                                <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10}}>
+                                    {blockedUsers ? (<ButtonLight title="Unblock" height={40} paddingVertical={2} onPress={()=>handleUnBlockPress(itm?._id)}/>): (
+                                    <ButtonLight title="Block" height={40} paddingVertical={2}  paddingHorizontal={26} onPress={()=>handleBlockPress(itm?._id)}/>)}
                                 </View>
                                     </View>
                                 </View>)})}

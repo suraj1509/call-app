@@ -35,14 +35,19 @@ const ProfileDetails = ({ route }) => {
     const diffInSeconds = Math.floor((now - messageTime) / 1000);
 
     if (diffInSeconds < 60) {
-      setActiveColor(COLORS.activeNow);
+      setActiveColor(COLORS.success);
       setLastActiveTime("Active just now");
       return;
     }
 
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) {
-      setActiveColor(COLORS.warning);
+      if(diffInMinutes < 5) {
+        setActiveColor(COLORS?.warning)
+      }else{
+        setActiveColor(COLORS.danger)
+      }
+      setActiveColor(COLORS.danger);
       setLastActiveTime(`Active ${diffInMinutes}m ago`);
       return;
     }
@@ -308,7 +313,7 @@ const ProfileDetails = ({ route }) => {
                   marginRight: 6,
                 }}
               />
-              <Text style={{ ...FONTS.fontSm, color: COLORS.white, top: -1 }}>active 2 mins ago</Text>
+              <Text style={{ ...FONTS.fontSm, color: COLORS.white, top: -1 }}>{lastActiveTime}</Text>
             </View>
             {/* <View
               style={{
@@ -623,7 +628,7 @@ const ProfileDetails = ({ route }) => {
               </View>
             </View>
           </View>
-          <GradientBtn title="Call Now"/> 
+          <GradientBtn title={activeColor === COLORS?.success  ? "Call Now" : "Request A CallBack"}/> 
         </View>
       </ScrollView>
     </SafeAreaView>

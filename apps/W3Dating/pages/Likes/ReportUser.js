@@ -16,6 +16,7 @@ import {
     Modal,
     Dimensions,
     TouchableWithoutFeedback,
+    TextInput,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { List } from "react-native-paper";
@@ -42,10 +43,61 @@ import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
 import TabStyle1 from "../../../../app/components/Footers/FooterStyle1";
 import CheckList from "../components/CheckList";
 import Buttons from "../../../../app/Screens/Components/Buttons";
+import debounce from "lodash.debounce";
+import { getSearchUsers } from "../../../../services/user";
 
 const ReportUser = ({ navigation }) => {
     const user = useSelector((state) => state?.user?.currentUser);
+    const [filteredUsers, setFilteredUsers] = useState([]);
     const { colors } = useTheme();
+    const dispatch = useDispatch();
+
+      const debouncedFetchUsers = React.useCallback(
+        debounce(async (query) => {
+          if (query.length !== 0) {
+            try {
+              const res = await getSearchUsers(query.toLowerCase());
+              setFilteredUsers(res);
+            } catch (error) {
+              console.error(error);
+            }
+          } else {
+            setFilteredUsers(user?.reportedUsers || []);
+          }
+        }, 400),
+        [],
+      );
+      
+
+      const handleReportPress = async (userId) => {
+        try {
+          const currentReportedUserIds = (user?.reportedUsers || []).map((u) => {
+            if (typeof u === 'string') return u;
+            if (u && typeof u === 'object' && u._id) return u._id.toString();
+            return null;
+          }).filter(Boolean);
+      
+          // Add new ID if not already there
+          if (!currentReportedUserIds.includes(userId)) {
+            currentReportedUserIds.push(userId.toString());
+          }
+      
+          
+          // Trigger update without waiting for result
+          await dispatch(Actions?.updateCurrentUser({ reportedUsers: currentReportedUserIds }));
+           await dispatch(
+                      Actions.fetchCurrentUser()
+                    );
+          
+          // Optimistically show UI changes before await
+          ToastAndroid.show("User Reported", ToastAndroid.SHORT);
+          navigation.goBack();
+
+        } catch (error) {
+          console.error('Report error:', error);
+        }
+      };
+      
 
     return (
         <>
@@ -57,7 +109,7 @@ const ReportUser = ({ navigation }) => {
             >
                 <Header
                     leftIcon={"back"}
-                    title={"Support And Safety"}
+                    title={"Report User"}
                     titleLeft
                     backAction={() => { navigation.goBack() }}
                 />
@@ -65,10 +117,46 @@ const ReportUser = ({ navigation }) => {
                 <ScrollView>
                     <View style={{ padding: 16 }}>
                         <View>
-                            <View>
-                                <Text style={{ ...FONTS.h6, flex: 1 }}>Blocked User List</Text>
-                                <View
-                                    //   key={index}
+                            <View
+                                    style={{
+                                      paddingHorizontal: 15,
+                                      paddingVertical: 2,
+                                    }}
+                                  >
+                                    <View>
+                                      <TextInput
+                                        style={{
+                                          borderRadius: 30,
+                                          borderColor: colors.border,
+                                          borderWidth: 1,
+                                          paddingLeft: 45,
+                                          height: 48,
+                                          paddingRight: 15,
+                                          paddingVertical: 10,
+                                          color: colors.textLight,
+                                        }}
+                                        placeholder="Search..."
+                                        placeholderTextColor={colors.textLight}
+                                        onChangeText={(text) => debouncedFetchUsers(text)}
+                                      />
+                                      <FeatherIcon
+                                        style={{
+                                          position: "absolute",
+                                          left: 15,
+                                          top: 15,
+                                        }}
+                                        name="search"
+                                        size={18}
+                                        color={colors.textLight}
+                                      />
+                                    </View>
+                                  </View>
+                            <View style={{ paddingVertical: 24, paddingHorizontal: 10 }}>
+                                <Text style={{ ...FONTS.h6, flex: 1 }}>User List</Text>
+                                <ScrollView>
+                                {filteredUsers?.map((itm, index) => {
+                                    return(<View
+                                      key={index}
                                     style={{
                                         flexDirection: "row",
                                         flexWrap: "wrap",
@@ -93,6 +181,7 @@ const ReportUser = ({ navigation }) => {
                                             shadowRadius: 4,
                                             flexDirection: 'row',
                                             alignItems: 'center',
+                                            justifyContent: 'space-between',
 
                                             gap: 20,
 
@@ -103,26 +192,10 @@ const ReportUser = ({ navigation }) => {
                                     >
                                         <View style={{flexDirection: 'row'}}>
                                         <Image
-                                            source={IMAGES.userPic4}
+                                            source={itm?.profilePhotos?.[0] ? {uri: itm?.profilePhotos?.[0]} : IMAGES.userPic4}
                                             // height={40}
                                             // width={40}
-                                            style={{ borderRadius: 20, position: 'relative', zIndex: 2,  height: 40, width: 40 }}
-                                            resizeMode="cover"
-
-                                        />
-                                        <Image
-                                            source={IMAGES.userPic3}
-                                            // height={10}
-                                            // width={10}
-                                            style={{ borderRadius: 20, position: 'relative', left: -16, zIndex: 1, height: 40, width: 40 }}
-                                            resizeMode="cover"
-
-                                        />
-                                        <Image
-                                            source={IMAGES.userPic7}
-                                            // height={40}
-                                            // width={40}
-                                            style={{ borderRadius: 20, position: 'relative', left: -28, height: 40, width: 40 }}
+                                            style={{ borderRadius: 20,  height: 40, width: 40 }}
                                             resizeMode="cover"
 
                                         />
@@ -138,7 +211,7 @@ const ReportUser = ({ navigation }) => {
                                                 borderBottomColor: colors.borderColor,
                                             }}
                                         >
-                                         Count   3
+                                        {itm?.name}
                                         </Text>
                                         <View
                                             style={{
@@ -176,229 +249,17 @@ const ReportUser = ({ navigation }) => {
                                                 })}
                                             </View> */}
                                         </View>
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: 66}}>
-                                        <TouchableOpacity>
-                                            <Text style={{ color: COLORS?.primary }}>View</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity>
-                                            <Text style={{ color: COLORS?.primary }}>Add</Text>
-                                        </TouchableOpacity>
-                                        </View>
+                                    
+                                <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10}}>
+                                     <ButtonLight title="Report" height={40} paddingVertical={2}  paddingHorizontal={26} onPress={()=>handleReportPress(itm?._id)}/>
+                                </View>
                                     </View>
-                                </View>
+                                </View>)})}
+                                </ScrollView>
                             </View>
-                            <View>
-                                <Text style={{ ...FONTS.h6, flex: 1 }}>Contact Support</Text>
-                                <View
-                                    //   key={index}
-                                    style={{
-                                        flexDirection: "row",
-                                        flexWrap: "wrap",
-                                        marginBottom: 32,
-                                        gap: 16
-                                        // justifyContent: 'space-between',
-                                        // alignItems: 'center'
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            width: '100%',
-                                            borderWidth: 1,
-                                            borderColor: COLORS.borderColor,
-                                            paddingHorizontal: 16,
-                                            paddingVertical: 16,
-                                            borderRadius: 10,
-
-                                            // Shadow for iOS
-                                            shadowColor: '#000',
-                                            shadowOffset: { width: 0, height: 2 },
-                                            shadowOpacity: 0.1,
-                                            shadowRadius: 4,
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-
-                                            // Elevation for Android
-                                            elevation: 4,
-                                            backgroundColor: '#fff', // Required for shadow to be visible
-                                        }}
-                                    >
-
-                                        <Text
-                                            style={{
-                                                ...FONTS.font,
-                                                ...FONTS.fontBold,
-                                                color: colors.title,
-                                                //   paddingBottom: 8,
-                                                //   marginBottom: 5,
-                                                //   borderBottomWidth: 0.5,
-                                                //   borderBottomColor: colors.borderColor,
-                                            }}
-                                        >
-                                            Email
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                ...FONTS.font,
-                                                ...FONTS.fontBold,
-                                                color: colors.title,
-                                                //   paddingBottom: 8,
-                                                //   marginBottom: 5,
-                                                //   borderBottomWidth: 0.5,
-                                                //   borderBottomColor: colors.borderColor,
-                                            }}
-                                        >
-                                            support@livechat.com
-                                        </Text>
-                                    </View><View
-                                        style={{
-                                            width: '100%',
-                                            borderWidth: 1,
-                                            borderColor: COLORS.borderColor,
-                                            paddingHorizontal: 16,
-                                            paddingVertical: 16,
-                                            borderRadius: 10,
-
-                                            // Shadow for iOS
-                                            shadowColor: '#000',
-                                            shadowOffset: { width: 0, height: 2 },
-                                            shadowOpacity: 0.1,
-                                            shadowRadius: 4,
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-
-                                            // Elevation for Android
-                                            elevation: 4,
-                                            backgroundColor: '#fff', // Required for shadow to be visible
-                                        }}
-                                    >
-
-                                        <Text
-                                            style={{
-                                                ...FONTS.font,
-                                                ...FONTS.fontBold,
-                                                color: colors.title,
-                                                //   paddingBottom: 8,
-                                                //   marginBottom: 5,
-                                                //   borderBottomWidth: 0.5,
-                                                //   borderBottomColor: colors.borderColor,
-                                            }}
-                                        >
-                                            Contact
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                ...FONTS.font,
-                                                ...FONTS.fontBold,
-                                                color: colors.title,
-                                                //   paddingBottom: 8,
-                                                //   marginBottom: 5,
-                                                //   borderBottomWidth: 0.5,
-                                                //   borderBottomColor: colors.borderColor,
-                                            }}
-                                        >
-                                            (928) 333-5728
-                                        </Text>
-                                    </View><View
-                                        style={{
-                                            width: '100%',
-                                            borderWidth: 1,
-                                            borderColor: COLORS.borderColor,
-                                            paddingHorizontal: 16,
-                                            paddingVertical: 16,
-                                            borderRadius: 10,
-
-                                            // Shadow for iOS
-                                            shadowColor: '#000',
-                                            shadowOffset: { width: 0, height: 2 },
-                                            shadowOpacity: 0.1,
-                                            shadowRadius: 4,
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-
-                                            // Elevation for Android
-                                            elevation: 4,
-                                            backgroundColor: '#fff', // Required for shadow to be visible
-                                        }}
-                                    >
-
-                                        <Text
-                                            style={{
-                                                ...FONTS.font,
-                                                ...FONTS.fontBold,
-                                                color: colors.title,
-                                                //   paddingBottom: 8,
-                                                //   marginBottom: 5,
-                                                //   borderBottomWidth: 0.5,
-                                                //   borderBottomColor: colors.borderColor,
-                                            }}
-                                        >
-                                            Address
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                ...FONTS.font,
-                                                ...FONTS.fontBold,
-                                                color: colors.title,
-                                                //   paddingBottom: 8,
-                                                //   marginBottom: 5,
-                                                //   borderBottomWidth: 0.5,
-                                                //   borderBottomColor: colors.borderColor,
-                                            }}
-                                        >
-                                            Location: Eagar, Arizona(AZ)
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-                            <View>
-                                <Text style={{ ...FONTS.h6, flex: 1 }}>Report Harassment</Text>
-                                <View
-                                    //   key={index}
-                                    style={{
-                                        flexDirection: "row",
-                                        flexWrap: "wrap",
-                                        marginVertical: 8,
-                                        // justifyContent: 'space-between',
-                                        // alignItems: 'center'
-                                    }}
-                                >
-                                    {/* <View
-                                        style={{
-                                            width: '100%',
-                                            borderWidth: 1,
-                                            borderColor: COLORS.borderColor,
-                                            paddingHorizontal: 16,
-                                            paddingVertical: 10,
-                                            borderRadius: 10,
-
-                                            // Shadow for iOS
-                                            shadowColor: '#000',
-                                            shadowOffset: { width: 0, height: 2 },
-                                            shadowOpacity: 0.1,
-                                            shadowRadius: 4,
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-
-                                            gap: 30,
-
-                                            // Elevation for Android
-                                            elevation: 4,
-                                            backgroundColor: '#fff', // Required for shadow to be visible
-                                        }}
-                                    > */}
-                                        <View style={{width: "100%"}}>
-                                       <ButtonOutline title="Report" btnRounded/>
-                                        </View>
-                                        {/* <TouchableOpacity>
-                                            <Text style={{ color: COLORS?.textLight }}>Hide</Text>
-                                        </TouchableOpacity> */}
-                                    {/* </View> */}
-                                </View>
-                            </View>
+                            
                         </View>
+                        
                     </View>
                 </ScrollView>
             </SafeAreaView>
