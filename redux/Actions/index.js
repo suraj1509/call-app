@@ -68,7 +68,7 @@ export const updateCurrentUser = (data) => async (dispatch) => {
 };
 
 export const updateFeedUserInfo = (data) => async (dispatch) => {
-  const { userId, type, ...filteredBody } = data.body;
+  const { userId, type, ...filteredBody } = data;
   dispatch({ type: TYPES?.UPDATE_FEED_USER, payload: data });
   try {
     await services?.updateFeedUser(data.type, data.userId, filteredBody);

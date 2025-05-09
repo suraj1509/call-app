@@ -38,7 +38,6 @@ const Rating = ({ navigation, route }) => {
         // if (onRate) onRate(value);
     };
     const handleReviewSubmit = () => {
-        console.log("activeProfileDetails", activeProfileDetails?._id || activeProfileDetails?.id)
         dispatch(Actions.updateFeedUserInfo({
             type: "review",
             userId: activeProfileDetails?._id || activeProfileDetails?.id,

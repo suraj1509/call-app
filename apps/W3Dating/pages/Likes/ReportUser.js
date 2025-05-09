@@ -71,20 +71,7 @@ const ReportUser = ({ navigation }) => {
 
       const handleReportPress = async (userId) => {
         try {
-          const currentReportedUserIds = (user?.reportedUsers || []).map((u) => {
-            if (typeof u === 'string') return u;
-            if (u && typeof u === 'object' && u._id) return u._id.toString();
-            return null;
-          }).filter(Boolean);
-      
-          // Add new ID if not already there
-          if (!currentReportedUserIds.includes(userId)) {
-            currentReportedUserIds.push(userId.toString());
-          }
-      
-          
-          // Trigger update without waiting for result
-          await dispatch(Actions?.updateCurrentUser({ reportedUsers: currentReportedUserIds }));
+          await dispatch(Actions?.updateFeedUserInfo({ type: 'report' , userId: userId }));
            await dispatch(
                       Actions.fetchCurrentUser()
                     );

@@ -353,8 +353,14 @@ const ProfileDetails = ({ route }) => {
               //   })
               // }
               onPress={async () => {
-                const token = await servicesgenerateAgoraToken(`channel_${activeProfileDetails?._id}`, activeProfileDetails?._id);
-                navigation.navigate("SocialConnect", { mode: "chat", channelName: `channel_${activeProfileDetails?._id}`, localUid: activeProfileDetails?._id, token })
+                try {
+                  const maxDuration = getValidSeconds(currentUser?.wallet, activeProfileDetails?.rate);
+                  const channelName = await getOrCreateChannel(currentUser?.id, activeProfileDetails?.id)
+                  const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "chat", id: currentUser?.id, callerName: currentUser?.name, img: currentUser?.profilePhotos[0] });
+                  navigation.navigate("SocialConnect", { mode: "chat", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, callerName: currentUser?.name, callerId: currentUser?.id, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet, activeProfileDetails })
+                } catch (error) {
+                  console.log(error, "error token")
+                }
               }}
             // onPress={async () => {})}
             >
@@ -383,10 +389,10 @@ const ProfileDetails = ({ route }) => {
               }}
               onPress={async () => {
                 try {
-                  const maxDuration = getValidSeconds(currentUser?.walletAmount, activeProfileDetails?.rate);
+                  const maxDuration = getValidSeconds(currentUser?.wallet, activeProfileDetails?.rate);
                   const channelName = await getOrCreateChannel(currentUser?.id, activeProfileDetails?.id)
                   const token = await services.createConnect({ channelName: channelName, uid: activeProfileDetails?.id, mode: "video", id: currentUser?.id, callerName: currentUser?.name, img: currentUser?.profilePhotos[0] });
-                  navigation.navigate("SocialConnect", { mode: "video", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet })
+                  navigation.navigate("SocialConnect", { mode: "video", channelName: channelName, localUid: activeProfileDetails?.id, token, recieverName: activeProfileDetails?.name, callerName: currentUser?.name, callerId: currentUser?.id, maxDuration, role: currentUser?.role, rate: activeProfileDetails?.rate, wallet: currentUser?.wallet, activeProfileDetails })
                 } catch (error) {
                   console.log(error, "error token")
                 }

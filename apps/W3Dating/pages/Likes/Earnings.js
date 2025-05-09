@@ -36,11 +36,62 @@ import TabButtonStyle1 from "../../../../app/components/Tabs/TabButtonStyle1";
 import TabButtonStyle2 from "../../../../app/components/Tabs/TabButtonStyle2";
 import ButtonLight from "../../../../app/components/Button/ButtonLight";
 import ButtonOutline from "../../../../app/components/Button/ButtonOutline";
+import { set } from "@react-native-firebase/database";
 
 const Earnings = ({ navigation }) => {
   const user = useSelector((state) => state?.user?.currentUser);
   const { colors } = useTheme();
   const dispatch = useDispatch();
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalTimeFormatted, setTotalTimeFormatted] = useState("0h 0m 0s"); 
+  const [todayEarnings, setTodayEarnings] = useState(0);
+
+  const calculateEarningsAndTime = (callHistory) => {
+    const today = new Date();
+    const todayDay = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+  
+    let totalEarnings = 0;
+    let totalDuration = 0;
+    let todayEarnings = 0;
+  
+    callHistory.forEach(call => {
+      const cost = Number(call.cost) || 0;
+      const duration = Number(call.duration) || 0;
+      const dateStr = call?.time;
+  
+      totalEarnings += cost;
+      totalDuration += duration;
+  
+      if (dateStr) {
+        const callDate = new Date(dateStr);
+        if (
+          callDate.getDate() === todayDay &&
+          callDate.getMonth() === todayMonth &&
+          callDate.getFullYear() === todayYear
+        ) {
+          todayEarnings += cost;
+        }
+      }
+    });
+  
+    const hours = Math.floor(totalDuration / 3600);
+    const minutes = Math.floor((totalDuration % 3600) / 60);
+    const seconds = Math.floor(totalDuration % 60);
+
+    setTotalEarnings(Number(totalEarnings.toFixed(2)));
+    setTotalTimeFormatted(`${hours}h ${minutes}m ${seconds}s`);
+    setTodayEarnings(Number(todayEarnings.toFixed(2)));
+    
+  };
+  
+
+  React.useEffect(() => {
+    if(user?.history?.length !== 0) {
+      calculateEarningsAndTime(user?.history);
+    }
+  }, [user?.history]);
 
   return (
     <>
@@ -82,7 +133,7 @@ const Earnings = ({ navigation }) => {
               >
                 Todays Earnings
               </Text>
-              <Text style={{color:COLORS.textLight}}>30 Rs</Text>
+              <Text style={{color:COLORS.textLight}}>{todayEarnings} Rs</Text>
             </View>  
             <View
               style={[
@@ -108,7 +159,7 @@ const Earnings = ({ navigation }) => {
               >
                Total Earnings 
               </Text>
-              <Text style={{color:COLORS.textLight}}>40000 Rs</Text>
+              <Text style={{color:COLORS.textLight}}>{totalEarnings} Rs</Text>
             </View>
              <View
               style={[
@@ -134,7 +185,7 @@ const Earnings = ({ navigation }) => {
               >
                Time Spent On Calls 
               </Text>
-              <Text style={{color:COLORS.textLight}}>400 mins</Text>
+              <Text style={{color:COLORS.textLight}}>{totalTimeFormatted}</Text>
             </View>
         </ScrollView>
             <View style={{paddingVertical: 20, paddingHorizontal:20, gap: 40}}>

@@ -74,26 +74,10 @@ const BlockUser = ({ navigation }) => {
 
       const handleBlockPress = async (userId) => {
         try {
-          // Normalize existing blocked user IDs
-          const currentBlockedUserIds = (user?.blockedUsers || []).map((u) => {
-            if (typeof u === 'string') return u;
-            if (u && typeof u === 'object' && u._id) return u._id.toString();
-            return null;
-          }).filter(Boolean);
-      
-          // Add new ID if not already there
-          if (!currentBlockedUserIds.includes(userId)) {
-            currentBlockedUserIds.push(userId.toString());
-          }
-      
-          
-          // Trigger update without waiting for result
-          await dispatch(Actions.updateCurrentUser({ blockedUsers: currentBlockedUserIds }));
+          await dispatch(Actions.updateFeedUserInfo({ type: 'block', userId: userId }));
           await dispatch(
             Actions.fetchCurrentUser()
           );
-          
-          // Optimistically show UI changes before await
           ToastAndroid.show("User Blocked", ToastAndroid.SHORT);
           navigation.goBack();
 
@@ -108,10 +92,8 @@ const BlockUser = ({ navigation }) => {
     
     const handleUnBlockPress = async (userId) => {
         try {
-          const updatedBlockedUsers = await user?.blockedUsers?.filter(_id => _id === userId);
-      
           await dispatch(
-            Actions.updateCurrentUser({ blockedUsers: updatedBlockedUsers })
+            Actions.updateFeedUserInfo({ type: 'unblock', userId })
           );
           await dispatch(
             Actions.fetchCurrentUser()

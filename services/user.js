@@ -6,16 +6,8 @@ export const updateUser = async (data) => {
 };
 
 export const updateFeedUser = async (type, userId, body) => {
-  if (type === "review") {
     const response = await http.post(`/feedUser/${type}/${userId}`, body);
     return response.data;
-  } else if (type === "unreject") {
-    const response = await http.delete(`/rejectUser/${userId}`);
-    return response.data;
-  } else {
-    const response = await http.post(`/${type}User/${userId}`);
-    return response.data;
-  }
 };
 
 export const getCurrentUser = async () => {

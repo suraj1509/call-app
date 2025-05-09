@@ -51,16 +51,7 @@ const BlockedUsers = ({ navigation }) => {
 
     const handleUnBlockPress = async (userId) => {
         try {
-            const updatedBlockedUsers = await (user?.blockedUsers || [])
-            .map(u => {
-              if (typeof u === 'string') return u;
-              if (u && typeof u === 'object') return u._id?.toString() || u.id?.toString();
-              return null;
-            })
-            .filter(id => id && id !== userId.toString());
-        
-          // Dispatch update
-          await dispatch(Actions.updateCurrentUser({ blockedUsers: updatedBlockedUsers }));
+          await dispatch(Actions.updateFeedUserInfo({type: 'unblock', userId: userId}));
           dispatch(Actions.fetchCurrentUser());
       
           ToastAndroid.show("User Unblocked", ToastAndroid.SHORT);

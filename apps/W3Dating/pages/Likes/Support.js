@@ -138,7 +138,7 @@ const Support = ({ navigation }) => {
                                                 borderBottomColor: colors.borderColor,
                                             }}
                                         >
-                                         Count   3
+                                         Count  {user?.blockedUsers?.length}
                                         </Text>
                                         <View
                                             style={{

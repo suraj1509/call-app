@@ -38,17 +38,86 @@ const EarningDetails = ({ navigation }) => {
   const [modal, setModal] = React.useState(false)
   const { height } = Dimensions.get("window");
   const [durationIndex, setDurationIndex] = React.useState(0)
+  const [history, setHistory] = React.useState([])
+  const [cost, setTotalCost] = React.useState([])
 
-  const scrollX = useRef(new Animated.Value(0)).current; // Important: useRef so it doesn't recreate
-  const scrollViewRef = useRef();
-  const buttons = ['Home', 'Profile', 'Settings'];
-
-  const handleTabClick = (i) => {
-    if (scrollViewRef.current) {
-        scrollViewRef.current.scrollTo({ x: i * (SIZES.width - 60 ), animated: true });
-      }
+  const filterHistory = (callHistory, filterType) => {
+    const today = new Date();
+    const todayDay = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+  
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(todayDay - today.getDay()); // Set to the start of the week (Sunday)
+  
+    const startOfMonth = new Date(today);
+    startOfMonth.setDate(1); // Set to the first day of the month
+  
+    let filteredHistory = [];
+    let totalCost = 0; // Variable to hold the total cost
+  
+    switch (filterType) {
+      case "today":
+        // Filter calls for today
+        filteredHistory = callHistory.filter(call => {
+          const dateStr = call?.time;
+          if (!dateStr) return false;
+  
+          const callDate = new Date(dateStr);
+          const isToday =
+            callDate.getDate() === todayDay &&
+            callDate.getMonth() === todayMonth &&
+            callDate.getFullYear() === todayYear;
+          
+          if (isToday) totalCost += Number(call.cost) || 0; // Add cost to totalCost if the call is from today
+          return isToday;
+        });
+        break;
+  
+      case "week":
+        // Filter calls for the current week
+        filteredHistory = callHistory.filter(call => {
+          const dateStr = call?.time;
+          if (!dateStr) return false;
+  
+          const callDate = new Date(dateStr);
+          const isThisWeek = callDate >= startOfWeek && callDate <= today;
+  
+          if (isThisWeek) totalCost += Number(call.cost) || 0; // Add cost to totalCost if the call is from the current week
+          return isThisWeek;
+        });
+        break;
+  
+      case "month":
+        // Filter calls for the current month
+        filteredHistory = callHistory.filter(call => {
+          const dateStr = call?.time;
+          if (!dateStr) return false;
+  
+          const callDate = new Date(dateStr);
+          const isThisMonth =
+            callDate.getMonth() === todayMonth && callDate.getFullYear() === todayYear;
+  
+          if (isThisMonth) totalCost += Number(call.cost) || 0; // Add cost to totalCost if the call is from the current month
+          return isThisMonth;
+        });
+        break;
+  
+      default:
+        break;
+    }
+  
+    // Update state for filtered history and total cost
+    setHistory(filteredHistory);
+    setTotalCost(Number(totalCost.toFixed(2))); // Store total cost with 2 decimal places
   };
-
+  
+  React.useEffect(() => {
+    if (user?.history?.length !== 0) {
+      filterHistory(user?.history, ["today", "week", "month"][durationIndex]);
+    }
+  }, [user?.history, durationIndex]);
+  
   return (
     <>
       <SafeAreaView
@@ -132,7 +201,7 @@ const EarningDetails = ({ navigation }) => {
               checked={false}
             /> 
             <View>
-              {Array.from({ length: 10 }).map((_, index) =>(<View
+              {history?.map((itm, index) =>(<View
               key={index}
                 style={{
                   flexDirection: "row",
@@ -173,7 +242,7 @@ const EarningDetails = ({ navigation }) => {
                       borderBottomColor: colors.borderColor,
                     }}
                   >
-                    20 Rs
+                    {itm?.cost} Rs
                   </Text>
                   <Text
                     style={{
@@ -186,7 +255,7 @@ const EarningDetails = ({ navigation }) => {
                       // borderBottomColor: colors.borderColor,
                     }}
                   >
-                    Adnan
+                    {itm?.name}
                   </Text>
                 </View>
               </View>))}
@@ -196,7 +265,7 @@ const EarningDetails = ({ navigation }) => {
              <View style={{paddingVertical: 20, paddingHorizontal:20, gap: 40}}>
       <ButtonLight
         onPress={() => navigation.navigate("EarningDetails")}
-        title={"Total:  Rs 300"}
+        title={`Total:  Rs ${cost}`}
         btnRounded
         color={COLORS.textLight}
       />

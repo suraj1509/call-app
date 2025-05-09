@@ -230,7 +230,7 @@ const SocialConnect = () => {
 
     const leave = async() => {
         const durationInMinutes = callDuration / 60;
-        const ratePerMinute = route?.params?.rate || 0; 
+        const ratePerMinute = route?.params?.rate ? route?.params?.rate : currentUser?.rate; 
         const callCost = parseFloat((durationInMinutes * ratePerMinute).toFixed(2));
 
         const currentWalletBalance = route?.params?.wallet || 0;
@@ -239,9 +239,9 @@ const SocialConnect = () => {
 
         dispatch(Actions.updateCurrentUser({ wallet: updatedWalletBalance, history: [...currentUser?.history, {name: route?.params?.recieverName || route?.params?.callerName, duration: callDuration, cost: callCost, type: route?.params?.callerId === currentUser?.id ? "outgoing" : "incoming"}] }));
         // Remove connection if needed
-        if (route.params.localUid) {
+        if (route?.params?.localUid) {
             await database()
-              .ref(`connect/${route.params.localUid}`)
+              .ref(`connect/${route?.params?.localUid}`)
               .remove()
               .then(() => {
                 console.log('Connection removed.');
