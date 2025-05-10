@@ -20,12 +20,29 @@ const Home = ({ navigation }) => {
   const currentUser = useSelector((state) => state.user.currentUser)
   const [feed, setFeed] = React.useState([])
   const [modal, setModal] = React.useState(false)
+  const [savedUser, setSavedUser] = React.useState({})
   const { height } = Dimensions.get("window");
   const [filter, setFilter] = React.useState(0)
+  console.log('savedUser', savedUser)
 
+  const populateSavedUsers = (userArray) => {
+    const mappedUsers = {};
+    userArray.forEach(user => {
+      if (user._id) {
+        mappedUsers[user._id] = true; // or store the whole user if needed
+      }
+    });
+    setSavedUser(mappedUsers);
+  };
+
+  
   React.useEffect(() => {
     dispatch(Actions?.fetchCurrentUser());
   }, []);
+  
+  React.useEffect(() => {
+    populateSavedUsers(feedUsers);
+  }, [currentUser]);
 
   React.useEffect(() => {
     if (currentUser?.role) {
@@ -292,6 +309,7 @@ const Home = ({ navigation }) => {
           <View style={GlobalStyleSheet.container}>
             <View style={[GlobalStyleSheet.row]}>
               {feed?.map((data, index) => {
+                console.log('data', savedUser[data?.id] === true)
                 if (!data?.profilePhotos?.length === 0) return null;
                 return (
                   <View style={[GlobalStyleSheet.col50, { borderRadius: 10, marginVertical: 8, gap: 4 }]} key={index}>
@@ -317,9 +335,9 @@ const Home = ({ navigation }) => {
                           <Text style={{ color: COLORS.light, fontSize: 12 }}>{data?.lastActive && timeAgo(data?.lastActive)}</Text>
                         </View>
                         <View>
-                          <TouchableOpacity>
+                          {savedUser[data?.id] === true ? (<TouchableOpacity>
                             <Image
-                              source={IMAGES.unstar}
+                              source={IMAGES.star}
                               style={{
                                 height: 22,
                                 width: 22,
@@ -327,7 +345,18 @@ const Home = ({ navigation }) => {
                               }}
                               tintColor={COLORS.primary}
                             />
-                          </TouchableOpacity>
+                          </TouchableOpacity>):(
+                          <TouchableOpacity>
+                            <Image
+                              source={IMAGES.star}
+                              style={{
+                                height: 22,
+                                width: 22,
+                                resizeMode: 'contain',
+                              }}
+                              tintColor={COLORS.primary}
+                            />
+                          </TouchableOpacity>)}
                         </View>
                       </View>
                       <LinearGradient

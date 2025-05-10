@@ -99,32 +99,53 @@ const Profile = ({ navigation, route }) => {
     setAge(age);
   }
 
-  const calculateProfileCompletion = async (profileStatus, totalFields = 13) => {
-    if (!Array.isArray(profileStatus)) return 0;
-    const uniqueFields = await new Set(profileStatus);
-    const completedFields = uniqueFields.size;
+  function getProfileCompletionPercentage(user) {
+    const requiredFields = [
+      'role',
+      'name',
+      'isOnboardingCompleted',
+      'about',
+      'email',
+      'dob',
+      'gender',
+      'language'
+    ];
+  
+    let validCount = 0;
+    const totalFields = requiredFields.length + 2; 
+  
+    requiredFields.forEach(field => {
+      if (user[field] !== null && user[field] !== undefined) {
+        validCount++;
+      }
+    });
 
-    const percentage = await Math.min((completedFields / totalFields) * 100, 100);
-
-    setProfileStatus(Math.round(percentage));
-  };
-
-  const calculateProfileCompletionProgress = (profileStatus, totalFields = 13) => {
-    if (!Array.isArray(profileStatus) || profileStatus.length === 0) {
-      return 0.4;
+    if (Array.isArray(user.profilePhotos) && user.profilePhotos.length > 0) {
+      validCount++;
     }
-    const uniqueFields = new Set(profileStatus);
-    const completedFields = uniqueFields.size;
 
-    const progress = Math.min(completedFields / totalFields, 1);
-
-    setProfileCircle(Number(progress.toFixed(2)));
-  };
+    if (
+      user.rate !== null && user.rate !== undefined ||
+      user.wallet !== null && user.wallet !== undefined
+    ) {
+      validCount++;
+    }
+  
+    const percentage = (validCount / totalFields) * 100;
+    const rounded = Math.round(percentage);
+  
+    const finalPercentage = rounded === 100 ? '100' : rounded.toString().padStart(2, '0');
+    const circleValue = +(rounded / 100).toFixed(2); 
+  
+    // Set both states
+    setProfileStatus(finalPercentage);
+    setProfileCircle(circleValue);
+  }
+  
 
   React.useEffect(() => {
-    calculateProfileCompletion(user?.profileStatus);
-    calculateProfileCompletionProgress(user?.profileStatus);
-  }, [user?.profileStatus]);
+    getProfileCompletionPercentage(user);
+  }, [user]);
 
   React.useEffect(() => {
     calculateAge(user?.dob);

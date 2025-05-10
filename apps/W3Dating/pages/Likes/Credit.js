@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, SafeAreaView, Image, TextInput, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, SafeAreaView, Image, TextInput, Dimensions, ToastAndroid } from 'react-native';
 import GradientBtn from '../components/GradientBtn';
 import { COLORS, FONTS, IMAGES, SIZES } from '../../../../app/constants/theme';
 import { useTheme } from '@react-navigation/native';
@@ -11,6 +11,7 @@ import * as Actions from '../../../../redux/Actions';
 import RazorpayCheckout from 'react-native-razorpay';
 import ButtonOutline from '../../../../app/components/Button/ButtonOutline';
 import ButtonLight from '../../../../app/components/Button/ButtonLight';
+import * as services from '../../../../services/payment';
 
 
 const Credit = ({navigation}) => {
@@ -18,39 +19,89 @@ const Credit = ({navigation}) => {
   const optionsCount = 6;  // How many options you want to show
   const amount = useSelector((state) => state?.user?.currentUser?.wallet);
   const dispatch = useDispatch();
+  const [couponCode, setCouponCode] = useState("");
   const height = Dimensions.get('window').height
 const theme = useTheme();
   const { colors } = theme;
   const [selectedAmount, setSelectedAmount] = useState(null);
+  console.log("Selected Amount", selectedAmount);
+  console.log("Selected Amount", couponCode);
 
   const rechargeOptions = Array.from({ length: optionsCount }, (_, i) => BASE_AMOUNT + i * 100);
 
   const handleRecharge = (amount) => {
     setSelectedAmount(amount);
   };
-const handleAddRecharge = async() => {
-  var options = {
-    description: 'Credits towards consultation',
-    image: 'https://i.imgur.com/3g7nmJC.jpg',
-    currency: 'INR',
-    key: 'rzp_test_DolnzoEJ5bnnkq',
-    amount: '5000',
-    name: 'Acme Corp',
-    order_id: 'order_DslnoIgkIDL8Zt',
-    prefill: {
-      email: 'gaurav.kumar@example.com',
-      contact: '9191919191',
-      name: 'Gaurav Kumar'
-    },
-    theme: {color: '#53a20e'}
-  }
-  await RazorpayCheckout.open(options).then((data) => {
-    alert(`Success: ${data.razorpay_payment_id}`);
-  }).catch((error) => {
-    alert(`Error: ${error.code} | ${error.description}`);
-  });
-   dispatch(Actions.updateCurrentUser({wallet: amount + selectedAmount}));
-}
+  
+  const couponsCodes = {
+    'WELCOME50': 50 ,
+    'LOVE10' : 10 ,
+    'DATE25' : 25 ,
+    'FLIRT15' : 15 ,
+    'ROMANCE5' : 5 ,
+    'MATCH100' : 100 ,
+  };
+
+  
+  const handleAddRecharge = async () => {
+    try {
+      const data = await services?.createOrder({
+        amount: selectedAmount,
+        currency: 'INR',
+        receipt: 'receipt#123'  
+      })
+  
+      const options = {
+        description: 'Recharge wallet',
+        image: 'https://i.imgur.com/3g7nmJC.jpg',
+        currency: data.currency,
+        amount: data.amount.toString(),
+        name: 'DatingKit',
+        order_id: data.id, 
+        key: 'rzp_test_DolnzoEJ5bnnkq',
+        prefill: {
+          email: 'gaurav.kumar@example.com',
+          contact: '9191919191',
+          name: 'Gaurav Kumar',
+        },
+        theme: { color: '#53a20e' }
+      };
+  
+      const paymentData = await RazorpayCheckout.open(options);
+  
+      const verificationResponse = await services?.verifyPayment({
+        razorpay_order_id: paymentData.razorpay_order_id,
+        razorpay_payment_id: paymentData.razorpay_payment_id,
+        razorpay_signature: paymentData.razorpay_signature,
+      });
+
+      if (verificationResponse?.success) {
+        ToastAndroid.show("Recharge Successfull", ToastAndroid.SHORT);
+        dispatch(Actions.updateCurrentUser({ wallet: amount + selectedAmount }));
+        setSelectedAmount(null);
+        setCouponCode("");
+      } else {
+        ToastAndroid.show("Payment verification failed", ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  const onApplyCoupon = () => {
+    const coupon = couponsCodes[couponCode.toUpperCase()];
+  
+    if (!coupon) {
+      ToastAndroid.show("Invalid coupon code", ToastAndroid.SHORT);
+      return;
+    }
+  
+    const newAmount = Math.max(selectedAmount + coupon, 0);
+    setSelectedAmount(newAmount);
+    // alert(`Coupon ${coupon.code} applied! ₹${coupon.discount} off`);
+  };
+
+  
   return (
        <SafeAreaView
             style={{
@@ -119,21 +170,23 @@ const handleAddRecharge = async() => {
                                         paddingLeft: 10,
                                         //backgroundColor:'red'
                                       }}
+                                      value={couponCode}
                                       //autoFocus
                                       // keyboardType="number-pad"
+                                      onChangeText={(text) => setCouponCode(text)}
                                       placeholder="Coupon Code"
                                       placeholderTextColor={theme.dark ? colors.title : "#141414"}
                                     />
                                   </View>
                                   <View style={{width: '30%'}}>
-                                    <ButtonLight title="Apply"/>
+                                    <ButtonLight title="Apply" onPress={onApplyCoupon}/>
                                   </View>
       </View>
     </View>
       <View style={{paddingVertical: 100, paddingHorizontal:20, gap: 20}}>
       <ButtonLight
-        onPress={() => navigation.navigate("History")}
-        title={"Check History"}
+        onPress={() => navigation.navigate("Transactions")}
+        title={"Check Transactions"}
         btnRounded
         color={COLORS.textLight}
       />
