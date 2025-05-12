@@ -71,7 +71,7 @@ export const updateFeedUserInfo = (data) => async (dispatch) => {
   const { userId, type, ...filteredBody } = data;
   dispatch({ type: TYPES?.UPDATE_FEED_USER, payload: data });
   try {
-    await services?.updateFeedUser(data.type, data.userId, filteredBody);
+    await services?.updateFeedUser(type, userId, filteredBody);
     const updatedData = await services?.getCurrentUser();
     dispatch({
       type: TYPES?.FETCH_CURRENT_USER_SUCCESS,

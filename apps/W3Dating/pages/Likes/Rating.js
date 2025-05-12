@@ -41,12 +41,11 @@ const Rating = ({ navigation, route }) => {
         dispatch(Actions.updateFeedUserInfo({
             type: "review",
             userId: activeProfileDetails?._id || activeProfileDetails?.id,
-            body: {
-                rating: rating,
-                comment: comment,
-                img: user?.profilePhotos?.[0] || activeProfileDetails?.img,
-                name: user?.name,
-            }}))
+            rating: rating,
+            comment: comment,
+            img: user?.profilePhotos?.[0] || activeProfileDetails?.img,
+            name: user?.name,
+            }))
             navigation.navigate("DrawerNavigation");
     }
     return (

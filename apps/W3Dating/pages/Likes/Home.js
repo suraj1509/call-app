@@ -23,14 +23,11 @@ const Home = ({ navigation }) => {
   const [savedUser, setSavedUser] = React.useState({})
   const { height } = Dimensions.get("window");
   const [filter, setFilter] = React.useState(0)
-  console.log('savedUser', savedUser)
 
   const populateSavedUsers = (userArray) => {
     const mappedUsers = {};
-    userArray.forEach(user => {
-      if (user._id) {
-        mappedUsers[user._id] = true; // or store the whole user if needed
-      }
+        userArray?.forEach(id => {
+        mappedUsers[id] = true; 
     });
     setSavedUser(mappedUsers);
   };
@@ -41,7 +38,7 @@ const Home = ({ navigation }) => {
   }, []);
   
   React.useEffect(() => {
-    populateSavedUsers(feedUsers);
+    populateSavedUsers(currentUser?.savedUsers);
   }, [currentUser]);
 
   React.useEffect(() => {
@@ -69,12 +66,12 @@ const Home = ({ navigation }) => {
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (minutes < 2) return 'Online';
-    if (minutes < 60) return `${minutes} minutes ago`;
-    if (hours < 24) return `${hours} hours ago`;
+    if (minutes < 60) return `${minutes} mins ago`;
+    if (hours < 24) return `${hours} hrs ago`;
     if (days < 30) return `${days} days ago`;
 
     const months = Math.floor(days / 30);
-    if (months < 12) return `${months} months ago`;
+    if (months < 12) return `${months} mon ago`;
 
     const years = Math.floor(months / 12);
     return `${years} years ago`;
@@ -309,7 +306,6 @@ const Home = ({ navigation }) => {
           <View style={GlobalStyleSheet.container}>
             <View style={[GlobalStyleSheet.row]}>
               {feed?.map((data, index) => {
-                console.log('data', savedUser[data?.id] === true)
                 if (!data?.profilePhotos?.length === 0) return null;
                 return (
                   <View style={[GlobalStyleSheet.col50, { borderRadius: 10, marginVertical: 8, gap: 4 }]} key={index}>
@@ -335,7 +331,12 @@ const Home = ({ navigation }) => {
                           <Text style={{ color: COLORS.light, fontSize: 12 }}>{data?.lastActive && timeAgo(data?.lastActive)}</Text>
                         </View>
                         <View>
-                          {savedUser[data?.id] === true ? (<TouchableOpacity>
+                          {savedUser[data?.id] === true ? (<TouchableOpacity
+                          onPress={async () => {
+                            setSavedUser({...savedUser, [data?.id]: false });
+                            dispatch(Actions?.updateFeedUserInfo({type: 'unsave', userId: data?.id}));
+                          }}
+                          >
                             <Image
                               source={IMAGES.star}
                               style={{
@@ -346,9 +347,14 @@ const Home = ({ navigation }) => {
                               tintColor={COLORS.primary}
                             />
                           </TouchableOpacity>):(
-                          <TouchableOpacity>
+                          <TouchableOpacity
+                          onPress={async () => {
+                            setSavedUser({...savedUser, [data?.id]: true });
+                            dispatch(Actions?.updateFeedUserInfo({type: 'save', userId: data?.id}));
+                          }}
+                          >
                             <Image
-                              source={IMAGES.star}
+                              source={IMAGES.unstar}
                               style={{
                                 height: 22,
                                 width: 22,

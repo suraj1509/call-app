@@ -53,7 +53,11 @@ const History = ({navigation}) => {
       </View>
 
       
-      <Text style={styles.callCost}>₹{item.cost}</Text>
+      <Text style={{
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: currentUser?.role !== "User" ? COLORS?.success : COLORS?.danger, 
+  }}>₹{item.cost}</Text>
     </View>
   );
 
@@ -123,7 +127,7 @@ const styles = StyleSheet.create({
   },
   callItem: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
     backgroundColor: '#ffffff',
     padding: 15,
@@ -145,11 +149,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginTop: 4,
-  },
-  callCost: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4caf50',
   },
 });
 
