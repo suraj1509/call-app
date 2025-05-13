@@ -22,7 +22,22 @@ import { useDispatch, useSelector } from "react-redux";
 const Notifications = ({ navigation }) => {
     const user = useSelector((state) => state?.user?.currentUser);
     const { colors } = useTheme();
-    const [notifications, setNotifications] = React.useState([{ msg: "You’ve earned ₹X today!", img: "", time: "03.02pm" }, { msg: "You have a new review", time: "01.05am", img: "" }, { msg: "A favorite caller is online now", time: "12.01pm", img: user?.profilePhotos[0]}])
+    const [notifications, setNotifications] = React.useState(user?.notifications)
+
+    function formatDateTime12h(timestamp) {
+        const date = new Date(timestamp);
+        let hours = date.getHours();
+        const minutes = `${date.getMinutes()}`.padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12; // convert 0 to 12
+        return `${date.toLocaleDateString()} ${hours}:${minutes} ${ampm}`;
+      }
+
+    //   React.useEffect(()=>{
+
+    //     dispatch(Actions.updateCurrentUser([]))
+    //   },[])
+
     return (
         <>
             <SafeAreaView
@@ -65,16 +80,18 @@ const Notifications = ({ navigation }) => {
                                         shadowOffset: { width: 0, height: 2 },
                                         shadowOpacity: 0.1,
                                         shadowRadius: 4,
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
+                                        // flexDirection: 'row',
+                                        // alignItems: 'space-between',
 
-                                        gap: 30,
+                                        // gap: 30,
 
                                         // Elevation for Android
                                         elevation: 4,
                                         backgroundColor: '#fff', // Required for shadow to be visible
                                     }}
                                 >
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+
                                     {note?.img ? (<Image
                                         source={{ uri: note?.img }}
                                         height={40}
@@ -99,12 +116,13 @@ const Notifications = ({ navigation }) => {
                                             //   borderBottomColor: colors.borderColor,
                                         }}
                                     >
-                                        {note?.msg?.slice(0, 26)}
+                                        {note?.message?.slice(0, 46)}
                                     </Text>
+                                    </View>
 
                                     {/* <TouchableOpacity> */}
                                     {/* </TouchableOpacity> */}
-                                    <Text style={{ color: COLORS?.textLight }}>{note?.time}</Text>
+                                    <Text style={{ color: COLORS?.textLight }}>{formatDateTime12h(note?.time)}</Text>
                                 </View>
                             </View>))}
                         </View>

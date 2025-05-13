@@ -718,7 +718,7 @@ const EditProfile = ({ navigation }) => {
               </View>
             </View>
 
-            <View
+            {user?.role !== "Employee" &&(<View
               style={[
                 GlobalStyleSheet.card,
                 {
@@ -780,7 +780,7 @@ const EditProfile = ({ navigation }) => {
                   max={100}
               />
               </View>
-            </View>
+            </View>)}
             <View
               style={[
                 GlobalStyleSheet.card,
@@ -816,7 +816,7 @@ const EditProfile = ({ navigation }) => {
                 title={user?.languagesSpoken?.map((languagesSpoken) => languagesSpoken).join(", ") || "Add Languages"}
               />
             </View>  
-            <View
+            {user?.role !== "User" &&(<View
               style={[
                 GlobalStyleSheet.card,
                 {
@@ -850,7 +850,7 @@ const EditProfile = ({ navigation }) => {
                 titleStyle={{ ...FONTS.font, fontSize: 16, color: colors.text }}
                 title={user?.timeSlots?.map((timeSlots) => timeSlots).join(", ") || "Select slots"}
               />
-            </View>
+            </View>)}
             {/* <View
               style={[
                 GlobalStyleSheet.card,
@@ -899,7 +899,7 @@ const EditProfile = ({ navigation }) => {
           />
     
     </View>
-            <View
+            {user?.role !== "User" && (<View
               style={[
                 GlobalStyleSheet.card,
                 {
@@ -962,8 +962,8 @@ const EditProfile = ({ navigation }) => {
                 max={20}
             />
               </View>
-            </View>
-            <View
+            </View>)}
+            {user?.role !== "User" &&(<View
               style={[
                 GlobalStyleSheet.card,
                 {
@@ -1005,7 +1005,8 @@ const EditProfile = ({ navigation }) => {
                   title={user?.about}
                 />
               </TouchableOpacity> */}
-            </View><View
+            </View>)}
+            <View
               style={[
                 GlobalStyleSheet.card,
                 {

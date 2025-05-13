@@ -123,7 +123,7 @@ const CustomNavigation = ({ state, navigation, descriptors }) => {
 
             if (route.name == "Home") {
               var a = 0;
-            } else if (route.name == "Credit") {
+            } else if (route.name == "Credit" || route.name == "Earnings") {
               var a = SIZES.width / 4;
             } else if (route.name == "History") {
               var a = SIZES.width / 4 + SIZES.width / 4;
@@ -153,7 +153,7 @@ const CustomNavigation = ({ state, navigation, descriptors }) => {
                   source={
                     label === "Home"
                       ? IMAGES.home
-                      : label === "Credit"
+                      : label === "Credit" || label === "Earnings"
                       ? IMAGES.wallet
                       : label === "History"
                       ? IMAGES.history

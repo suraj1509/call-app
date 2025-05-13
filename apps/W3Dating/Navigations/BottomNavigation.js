@@ -7,10 +7,13 @@ import Profile from "../pages/Profile/Profile";
 import CustomNavigation from "./CustomNavigation";
 import Credit from "../pages/Likes/Credit";
 import { TouchableWithoutFeedback } from "react-native";
+import Earnings from "../pages/Likes/Earnings";
+import { useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 
 const BottomNavigation = () => {
+  const currentUser = useSelector((state) => state?.user?.currentUser);
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomNavigation {...props} />}
@@ -34,8 +37,9 @@ const BottomNavigation = () => {
         }}
       />
       <Tab.Screen
-        name="Credit"
-        component={Credit}
+        name={`${currentUser.role === "User" ? "Credit" : "Earnings"}`}
+        component={currentUser.role === "User" ? Credit : Earnings}
+        // component={Credit}
         options={{
           tabBarButton: (props) => <TouchableWithoutFeedback {...props} />,
         }}
