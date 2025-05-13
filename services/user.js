@@ -25,8 +25,8 @@ export const getCountries = async () => {
   return response?.data?.data;
 };
 
-export const getFeed = async (role) => {
-  const response = await http.get(`/users/feedUsers?role=${role}`);
+export const getFeed = async (filter) => {
+  const response = await http.get(`/users/feedUsers?filter=${filter}`);
   return response?.data || [];
 };
 

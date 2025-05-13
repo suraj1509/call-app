@@ -8,7 +8,7 @@ import auth from "@react-native-firebase/auth";
 // import {firebaseAuth} from '../config/firebase';
 // import { isEnvDev } from "../../config"
 // isEnvDev ? process.env.REACT_APP_API_BASE_URL_LOCAL : process.env.REACT_APP_API_BASE_URL
-const apiBaseUrl = "https://31e4-2409-40c2-500e-30bd-b579-d9e7-837c-4827.ngrok-free.app";
+const apiBaseUrl = "https://c74d-2409-40c2-300e-7826-2801-ffaf-aaeb-196e.ngrok-free.app";
 
 const http = axios.create({
   baseURL: `${apiBaseUrl}/api/v1`,

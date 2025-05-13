@@ -19,10 +19,10 @@ export const fetchCurrentUser = () => async (dispatch) => {
   }
 };
 
-export const fetchFeedUsers = (role) => async (dispatch) => {
+export const fetchFeedUsers = (filter) => async (dispatch) => {
   dispatch({ type: TYPES?.FETCH_FEED_USERS });
   try {
-    const data = await services?.getFeed(role);
+    const data = await services?.getFeed(filter);
     dispatch({
       type: TYPES?.FETCH_FEED_USERS_SUCCESS,
       payload: data,

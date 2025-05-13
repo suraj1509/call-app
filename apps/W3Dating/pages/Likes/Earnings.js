@@ -196,7 +196,7 @@ const Earnings = ({ navigation }) => {
         color={COLORS.textLight}
       />
       <ButtonOutline
-        // onPress={handleAddRecharge}
+        onPress={() => navigation.navigate("PaymentRequest")}
         title={"Proceed to Widthdraw"}
         btnRounded
       />

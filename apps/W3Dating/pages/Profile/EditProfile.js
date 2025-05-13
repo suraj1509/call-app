@@ -50,6 +50,7 @@ const EditProfile = ({ navigation }) => {
   const timeSlotSheet = useRef();
   const aboutSheet = useRef();
   const dispatch = useDispatch();
+  const [ageValue , setAgeValue] = useState([18 , 30]);
 
   const [imageData, setImageData] = useState(user?.profilePhotos || []);
   const [loader0, setLoader0] = React.useState(false);
@@ -728,6 +729,69 @@ const EditProfile = ({ navigation }) => {
                 },
               ]}
             >
+              <View style={{flexDirection:"row", justifyContent:"space-between", alignItems:"center",  marginBottom: 5,
+                  borderBottomWidth: 1,
+                  borderBottomColor: colors.borderColor,}}>
+
+             
+              <Text
+                style={{
+                  ...FONTS.font,
+                  ...FONTS.fontBold,
+                  color: colors.title,
+                  paddingBottom: 8,
+                 
+                }}
+              >
+                Age Preference
+              </Text>
+              <Text style={{
+                  ...FONTS.font,
+                  ...FONTS.fontBold,
+                  color: colors.title,
+                  paddingBottom: 8,
+                  marginBottom: 5,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: colors.borderColor,
+                }}>{ageValue[0]}-{ageValue[1]}</Text>
+                 </View>
+              <View style={{alignItems:"center"}}>
+
+               <MultiSlider
+                  trackStyle={{height:4,borderRadius:2,backgroundColor:'rgba(142,165,200,.3)'}}
+                  selectedStyle={{
+                      backgroundColor:COLORS.primary3,
+                  }}
+                  values={ageValue}
+                  markerStyle={{
+                      backgroundColor:COLORS.white,
+                      top:1,
+                      height:18,
+                      width:18,
+                      borderWidth: 3,
+                    borderColor:COLORS.primary3,
+                  }}
+                  onValuesChange={(val) => setAgeValue(val)}
+                  onValuesChangeFinish={(val) => {
+                  dispatch(Actions?.updateCurrentUser({ agePreference : val }));
+                }}
+                  sliderLength={SIZES.width - 80}
+                  min={18}
+                  max={100}
+              />
+              </View>
+            </View>
+            <View
+              style={[
+                GlobalStyleSheet.card,
+                {
+                  backgroundColor: colors.cardBg,
+                  borderColor: colors.borderColor,
+                  paddingBottom: 5,
+                  // marginTop: 25,
+                },
+              ]}
+            >
               <Text
                 style={{
                   ...FONTS.font,
@@ -759,7 +823,7 @@ const EditProfile = ({ navigation }) => {
                   backgroundColor: colors.cardBg,
                   borderColor: colors.borderColor,
                   paddingBottom: 5,
-                  marginTop: 25,
+                  // marginTop: 0,
                 },
               ]}
             >

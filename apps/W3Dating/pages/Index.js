@@ -43,6 +43,7 @@ import BlockUser from "./Likes/BlockUser";
 import BlockedUsers from "./Likes/BlockedUsers";
 import ReportUser from "./Likes/ReportUser";
 import Transactions from "./Likes/Transactions";
+import PaymentRequestDetails from "./Likes/PaymentRequestDetails";
 
 const StackComponent = createNativeStackNavigator();
 
@@ -123,6 +124,7 @@ const W3DatingPage = ({ initialLoading = false, skipInitialLaunch = false, isLog
         {/*<StackComponent.Screen name={"Notifications"} component={Notifications} /> */}
         {/* <StackComponent.Screen name={"Languages"} component={Languages} /> */}
         <StackComponent.Screen name={"EditProfile"} component={EditProfile} />
+        <StackComponent.Screen name={"PaymentRequest"} component={PaymentRequestDetails} />
         <StackComponent.Screen name={"Transactions"} component={Transactions} />
         <StackComponent.Screen name={"BlockUser"} component={BlockUser} />
         <StackComponent.Screen name={"BlockedUsers"} component={BlockedUsers} />

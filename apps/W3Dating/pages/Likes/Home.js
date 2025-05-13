@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Modal, Dimensions, TouchableWithoutFeedback } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import LinearGradient from "react-native-linear-gradient";
 import { COLORS, FONTS, IMAGES, SIZES } from "../../../../app/constants/theme";
 import { GlobalStyleSheet } from "../../../../app/constants/StyleSheet";
@@ -41,11 +41,13 @@ const Home = ({ navigation }) => {
     populateSavedUsers(currentUser?.savedUsers);
   }, [currentUser]);
 
-  React.useEffect(() => {
-    if (currentUser?.role) {
-      dispatch(Actions?.fetchFeedUsers(currentUser?.role));
-    }
-  }, [currentUser?.role]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (currentUser?.role) {
+        dispatch(Actions?.fetchFeedUsers(["Newest", "Online Now", "Top Rated", "Age Range", "Language"][filter]));
+      }
+    }, [currentUser?.role, filter])
+  );
 
   React.useEffect(() => {
     if (feedUsers) {
